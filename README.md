@@ -10,9 +10,7 @@
 
 - MySQL 5.5+
 
-- [Aviator]: https://github.com/killme2008/aviatorscript	"AviatorScript"
-
-   5.3.0+
+- AviatorScript 5.3.0+
 
 
 
