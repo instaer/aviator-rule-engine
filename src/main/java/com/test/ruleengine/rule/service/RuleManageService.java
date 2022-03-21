@@ -21,9 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class RuleManageService {
@@ -75,6 +73,12 @@ public class RuleManageService {
     public void saveConditionInfoList(List<ConditionInfoEntity> conditionInfoEntityList) {
         if (CollectionUtils.isEmpty(conditionInfoEntityList)) {
             throw new RuleRunTimeException("empty conditionInfoEntityList");
+        }
+
+        boolean hasSamePriority = conditionInfoEntityList.stream().map(ConditionInfoEntity::getPriority).distinct()
+                .count() < conditionInfoEntityList.size();
+        if (hasSamePriority) {
+            throw new RuleRunTimeException("cannot contain conditions of the same priority");
         }
 
         // remove existing conditionInfo
