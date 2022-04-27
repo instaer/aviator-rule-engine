@@ -8,21 +8,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 逻辑运算类型
+ * 条件逻辑运算类型
  */
 @Getter
 @AllArgsConstructor
 public enum ConditionLogicType {
 
     /**
-     * 当前条件满足则继续，否则跳过后续条件
+     * 当前条件单元满足则继续，否则跳过后续条件单元
      */
-    AND(1, "&&", "当前条件必须满足，否则规则不通过"),
+    AND(1, "&&", "所在条件单元必须满足，否则条件单元值为false"),
 
     /**
-     * 当前条件满足则跳过后续条件，否则继续
+     * 当前条件单元满足则跳过后续条件单元，否则继续
      */
-    OR(2, "||", "当前条件如果满足，则规则通过");
+    OR(2, "||", "所在条件单元如果满足，则条件单元值为true");
 
     private final Integer code;
     private final String value;
