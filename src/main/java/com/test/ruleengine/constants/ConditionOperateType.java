@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 条件运算类型
+ * 条件关系运算类型
  */
 @Getter
 @AllArgsConstructor
