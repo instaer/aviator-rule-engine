@@ -7,8 +7,10 @@
 - AviatorScript 5.3.0+
 
 ## Tables Required
-t_rule_info
-```mysql
+<details>
+  <summary>t_rule_info</summary>
+
+  ```mysql
 CREATE TABLE `t_rule_info` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '规则id',
   `code` VARCHAR(20) NOT NULL COMMENT '规则编码（唯一 用于调用方进行绑定）',
@@ -20,10 +22,13 @@ CREATE TABLE `t_rule_info` (
   PRIMARY KEY (`id`),
 	KEY `ix_code` (`code`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '规则信息表';
-```
+  ```
+</details>
 
-t_condition_info
-```mysql
+<details>
+  <summary>t_condition_info</summary>
+
+  ```mysql
 CREATE TABLE `t_condition_info` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '条件id',
   `rule_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '所属规则id',
@@ -37,10 +42,11 @@ CREATE TABLE `t_condition_info` (
   PRIMARY KEY (`id`),
   KEY `ix_rule_id` (`rule_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '条件信息表';
-```
+  ```
+</details>
 
 ## 支持的条件逻辑运算类型
-https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionLogicType.java
+[ConditionLogicType.java](https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionLogicType.java)
 
 | 逻辑类型 | 值 |               描述               |
 | :---: | :---: | :------------------------------: |
@@ -48,7 +54,7 @@ https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2
 |  OR   | \|\|  |   所在条件单元如果满足，则条件单元值为true   |
 
 ## 支持的条件关系运算类型
-https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionOperateType.java
+[ConditionOperateType.java](https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionOperateType.java)
 
 * 关系型条件
 
