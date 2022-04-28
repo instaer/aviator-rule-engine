@@ -125,6 +125,9 @@ CREATE TABLE `t_condition_info` (
 ## Getting started
 
 ### Example
+#### Example
+##### Example
+###### Example
 在规则管理中添加一条规则，规则编码定义为BUSINESS_RULE_001，在规则下添加以下两个条件：
 
 | 条件  |  变量名  | 参考值 | 逻辑运算类型 |    关系运算类型     | 优先级 |
