@@ -11,20 +11,25 @@ import org.springframework.context.annotation.Primary;
 public class AviatorEvaluatorConfig {
 
     /**
-     * 默认的全局共享AviatorScript引擎
-     * 默认以运行时性能优先，在编译阶段花费更多时间做优化，适合长期运行的表达式（AviatorEvaluator.EVAL）
+     * AviatorScript engine instance, the default global shared.
+     * Prioritize runtime performance, spend more time optimizing in the compilation phase,
+     * <em>suitable for long-running expressions</em> (AviatorEvaluator.EVAL).
      *
      * @return
      */
     @Bean
     @Primary
     AviatorEvaluatorInstance evalEvaluatorInstance() {
-        return AviatorEvaluator.getInstance().useLRUExpressionCache(500);
+        AviatorEvaluatorInstance evaluatorInstance = AviatorEvaluator.getInstance().useLRUExpressionCache(500);
+        // floating point numbers are all parsed as decimal
+        evaluatorInstance.setOption(Options.ALWAYS_PARSE_FLOATING_POINT_NUMBER_INTO_DECIMAL, true);
+        return evaluatorInstance;
     }
 
     /**
-     * 以编译为主的AviatorScript引擎
-     * 以编译性能优先，不做任何编译优化，牺牲一定的运行性能，适合需要频繁编译表达式的场景（AviatorEvaluator.COMPILE）
+     * AviatorScript engine instance mainly used for compilation.
+     * Prioritize compilation performance, without any compilation optimization, sacrificing certain running performance,
+     * suitable for scenarios that require <em>frequent compilation of expressions</em> (AviatorEvaluator.COMPILE).
      *
      * @return
      */
