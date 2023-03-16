@@ -14,53 +14,53 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum ConditionRelationType {
 
-    EQUAL(1, "decimal(%s) == decimal(%s)"),
+    EQUAL("EQUAL", "%s == %s"),
 
-    NOT_EQUAL(2, "decimal(%s) != decimal(%s)"),
+    NOT_EQUAL("NOT_EQUAL", "%s != %s"),
 
-    LESS_EQUAL(3, "decimal(%s) <= decimal(%s)"),
+    LESS_EQUAL("LESS_EQUAL", "%s <= %s"),
 
-    GREATER_EQUAL(4, "decimal(%s) >= decimal(%s)"),
+    GREATER_EQUAL("GREATER_EQUAL", "%s >= %s"),
 
-    LESS(5, "decimal(%s) < decimal(%s)"),
+    LESS("LESS", "%s < %s"),
 
-    GREATER(6, "decimal(%s) > decimal(%s)"),
+    GREATER("GREATER", "%s > %s"),
 
     /**
      * a string type element is included in a list
      */
-    INCLUDE_IN_LIST(7, "include(seq.set(%s), str(%s))"),
+    INCLUDE_IN_LIST("INCLUDE_IN_LIST", "include(seq.set(%s), str(%s))"),
 
     /**
      * a string type element is not included in a list
      */
-    NOT_INCLUDE_IN_LIST(8, "!include(seq.set(%s), str(%s))"),
+    NOT_INCLUDE_IN_LIST("NOT_INCLUDE_IN_LIST", "!include(seq.set(%s), str(%s))"),
 
     /**
      * some characters in a string are contained in a list
      */
-    SOME_CONTAINS_IN_LIST(9, "nil != seq.some(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
+    SOME_CONTAINS_IN_LIST("SOME_CONTAINS_IN_LIST", "nil != seq.some(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
 
     /**
      * none characters of a string are contained in a list
      */
-    NONE_CONTAINS_IN_LIST(10, "seq.not_any(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
+    NONE_CONTAINS_IN_LIST("NONE_CONTAINS_IN_LIST", "seq.not_any(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
 
     /**
      * match regular expression
      */
-    REGULAR(11, "str(%s) =~ %s");
+    REGULAR("REGULAR", "str(%s) =~ %s");
 
-    private final Integer code;
+    private final String desc;
     private final String format;
 
-    public static ConditionRelationType getConditionRelationType(Integer code) {
+    public static ConditionRelationType getConditionRelationType(String name) {
         return Arrays.stream(ConditionRelationType.values())
-                .filter(e -> e.getCode().equals(code))
+                .filter(t -> t.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static Map<Integer, String> conditionRelationTypeMap = Arrays.stream(ConditionRelationType.values())
-            .collect(Collectors.toMap(ConditionRelationType::getCode, ConditionRelationType::name));
+    public static Map<String, String> conditionRelationTypeMap = Arrays.stream(ConditionRelationType.values())
+            .collect(Collectors.toMap(ConditionRelationType::name, ConditionRelationType::getDesc));
 }

@@ -27,12 +27,12 @@ public class RuleManageController {
     private RuleManageService ruleManageService;
 
     @GetMapping("logicTypeMap")
-    public ResponseVO<Map<Integer, String>> logicTypeMap() {
+    public ResponseVO<Map<String, String>> logicTypeMap() {
         return ResponseVO.ok(ConditionLogicType.conditionLogicTypeMap);
     }
 
     @GetMapping("/relationTypeMap")
-    public ResponseVO<Map<Integer, String>> relationTypeMap() {
+    public ResponseVO<Map<String, String>> relationTypeMap() {
         return ResponseVO.ok(ConditionRelationType.conditionRelationTypeMap);
     }
 
@@ -52,36 +52,35 @@ public class RuleManageController {
     }
 
     @PostMapping("/saveRulesetInfo")
-    public ResponseVO<?> saveRulesetInfo(@RequestBody RulesetInfoEntity rulesetInfoEntity) {
+    public ResponseVO<RulesetInfoEntity> saveRulesetInfo(@RequestBody RulesetInfoEntity rulesetInfoEntity) {
         return ResponseVO.ok(ruleManageService.saveRulesetInfo(rulesetInfoEntity));
     }
 
     @PostMapping("/deleteRulesetInfo")
-    public ResponseVO<String> deleteRulesetInfo(Long rulesetId) {
-        ruleManageService.deleteRulesetInfo(rulesetId);
+    public ResponseVO<String> deleteRulesetInfo(@RequestBody Map<String, Object> requestBody) {
+        ruleManageService.deleteRulesetInfo(((Integer) requestBody.get("rulesetId")).longValue());
         return ResponseVO.ok();
     }
 
     @PostMapping("/saveRuleInfo")
-    public ResponseVO<?> saveRuleInfo(@RequestBody RuleInfoEntity ruleInfoEntity) {
+    public ResponseVO<RuleInfoEntity> saveRuleInfo(@RequestBody RuleInfoEntity ruleInfoEntity) {
         return ResponseVO.ok(ruleManageService.saveRuleInfo(ruleInfoEntity));
     }
 
     @PostMapping("/deleteRuleInfo")
-    public ResponseVO<String> deleteRuleInfo(Long ruleId) {
-        ruleManageService.deleteRuleInfo(ruleId);
+    public ResponseVO<String> deleteRuleInfo(@RequestBody Map<String, Object> requestBody) {
+        ruleManageService.deleteRuleInfo(((Integer) requestBody.get("ruleId")).longValue());
         return ResponseVO.ok();
     }
 
     @PostMapping("/saveConditionInfoList")
-    public ResponseVO<String> saveConditionInfoList(@RequestBody List<ConditionInfoEntity> conditionInfoEntityList) {
-        ruleManageService.saveConditionInfoList(conditionInfoEntityList);
-        return ResponseVO.ok();
+    public ResponseVO<List<ConditionInfoEntity>> saveConditionInfoList(@RequestBody List<ConditionInfoEntity> conditionInfoEntityList) {
+        return ResponseVO.ok(ruleManageService.saveConditionInfoList(conditionInfoEntityList));
     }
 
     @PostMapping("/refreshRuleset")
-    public ResponseVO<String> refreshRuleset(Long rulesetId) {
-        ruleManageService.refreshRuleset(rulesetId);
+    public ResponseVO<String> refreshRuleset(@RequestBody Map<String, Object> requestBody) {
+        ruleManageService.refreshRuleset(((Integer) requestBody.get("rulesetId")).longValue());
         return ResponseVO.ok();
     }
 }

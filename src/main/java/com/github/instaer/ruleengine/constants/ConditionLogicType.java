@@ -15,27 +15,27 @@ import java.util.stream.Collectors;
 public enum ConditionLogicType {
 
     /**
-     * if current condition unit evaluates to true, continue to execute backwards,
-     * otherwise skip the following condition unit and return false directly
+     * if current condition evaluates to true, continue to execute backwards,
+     * otherwise skip the following condition and return false directly
      */
-    AND(1, "&&"),
+    AND("AND", "&&"),
 
     /**
-     * If current condition unit evaluates to true, skip the following condition unit and return true directly,
+     * If current condition evaluates to true, skip the following condition and return true directly,
      * otherwise continue to execute backward.
      */
-    OR(2, "||");
+    OR("OR", "||");
 
-    private final Integer code;
+    private final String desc;
     private final String value;
 
-    public static ConditionLogicType getConditionLogicType(Integer code) {
+    public static ConditionLogicType getConditionLogicType(String name) {
         return Arrays.stream(ConditionLogicType.values())
-                .filter(e -> e.getCode().equals(code))
+                .filter(t -> t.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static Map<Integer, String> conditionLogicTypeMap = Arrays.stream(ConditionLogicType.values())
-            .collect(Collectors.toMap(ConditionLogicType::getCode, ConditionLogicType::getValue));
+    public static Map<String, String> conditionLogicTypeMap = Arrays.stream(ConditionLogicType.values())
+            .collect(Collectors.toMap(ConditionLogicType::name, ConditionLogicType::getDesc));
 }

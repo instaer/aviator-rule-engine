@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum RulesetMode {
-    BUILDING(1),
+    BUILDING(0),
 
-    BUILT(2);
+    BUILT(1);
 
     private final Integer code;
 }

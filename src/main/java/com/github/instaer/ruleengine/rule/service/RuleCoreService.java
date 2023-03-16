@@ -8,6 +8,7 @@ import com.github.instaer.ruleengine.rule.repository.RulesetInfoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,15 +22,19 @@ public class RuleCoreService {
     @Autowired
     private ExpressionExecuteService expressionExecuteService;
 
-    public boolean executeRuleset(String rulesetCode, Map<String, Object> paraMap) {
+    public Map<String, Object> executeRuleset(String rulesetCode, Map<String, Object> paraMap) {
         if (StringUtils.isEmpty(rulesetCode)) {
-            throw new RuleRunTimeException("invalid rulesetCode");
+            throw new RuleRunTimeException("invalid parameter(rulesetCode)");
+        }
+
+        if (CollectionUtils.isEmpty(paraMap)) {
+            throw new RuleRunTimeException("invalid parameter(paraMap)");
         }
 
         RulesetInfoEntity rulesetInfoEntity = Optional.ofNullable(rulesetInfoRepository.findByCode(rulesetCode))
-                .orElseThrow(() -> new RuleRunTimeException("invalid rulesetCode"));
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetCode)"));
 
-        if (!RulesetMode.BUILDING.getCode().equals(rulesetInfoEntity.getMode())) {
+        if (!RulesetMode.BUILT.getCode().equals(rulesetInfoEntity.getMode())) {
             throw new RuleRunTimeException("expression under the ruleset(" + rulesetCode + ")  is not built");
         }
 

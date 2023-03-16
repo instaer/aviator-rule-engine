@@ -39,7 +39,7 @@ public class ConditionInfoEntity {
     private String remark;
 
     /**
-     * variable name (a unique identifier passed in as a variable)
+     * variable name (unique identifier for passing in parameters)
      */
     @Column
     private String variableName;
@@ -51,13 +51,13 @@ public class ConditionInfoEntity {
      * condition relational operation type {@code ConditionRelationType}
      */
     @Column
-    private Integer relationType;
+    private String relationType;
 
     /**
      * condition logical operation type {@code ConditionLogicType}
      */
     @Column
-    private Integer logicType;
+    private String logicType;
 
     /**
      * condition priority (the larger the value, the higher the priority)

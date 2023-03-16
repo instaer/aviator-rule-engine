@@ -48,7 +48,7 @@ public class ExpressionBuildService {
      */
     public String buildRulesetExpression(Long rulesetId) {
         if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid rulesetId");
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
 
         List<RuleInfoEntity> ruleInfos = ruleInfoRepository.findByRulesetId(rulesetId);
@@ -60,7 +60,7 @@ public class ExpressionBuildService {
             throw new RuleRunTimeException("all rules in the ruleset must set the return value");
         }
 
-        StringBuilder rulesetExpression = new StringBuilder("let rmap = seq.map();").append("\n");
+        StringBuilder rulesetExpression = new StringBuilder("let rmap = seq.map();\n");
         for (int i = 0; i < ruleInfos.size(); i++) {
             RuleInfoEntity ruleInfo = ruleInfos.get(i);
             List<ConditionInfoEntity> conditionInfos = conditionInfoRepository.findByRuleId(ruleInfo.getId());
@@ -69,12 +69,11 @@ public class ExpressionBuildService {
             }
 
             String ruleExpression = buildRuleExpression(conditionInfos);
-            rulesetExpression.append(i == 0 ? "if(" : "elsif(").append(ruleExpression).append("){").append("\n");
+            rulesetExpression.append(i == 0 ? "if(" : "elsif(").append(ruleExpression).append("){\n");
             Arrays.stream(ruleInfo.getReturnValues().split(",")).map(v -> v.split(":"))
                     .forEach(a -> rulesetExpression.append("seq.put(rmap, '").append(a[0]).append("', ").append(a[1])
-                            .append(");")
-                            .append("\n"));
-            rulesetExpression.append("}").append("\n");
+                            .append(");\n"));
+            rulesetExpression.append("}\n");
         }
 
         rulesetExpression.append("return rmap;");
@@ -96,9 +95,9 @@ public class ExpressionBuildService {
         List<ConditionInstance> conditionInstances = new ArrayList<>();
         for (ConditionInfoEntity conditionInfo : conditionInfos) {
             ConditionRelationType relationType = Optional.ofNullable(ConditionRelationType.getConditionRelationType(conditionInfo.getRelationType()))
-                    .orElseThrow(() -> new RuleRunTimeException("invalid relationType:" + conditionInfo.getRelationType()));
+                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(relationType):" + conditionInfo.getRelationType()));
             ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
-                    .orElseThrow(() -> new RuleRunTimeException("invalid logicType:" + conditionInfo.getLogicType()));
+                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
             ConditionInstance conditionInstance = ConditionInstance.builder()
                     .variableName(conditionInfo.getVariableName())
@@ -112,7 +111,7 @@ public class ExpressionBuildService {
 
         log.info("## build condition expression start");
 
-        // sort by priority in descending order
+        // sort by priority in desc order
         conditionInstances.sort(Comparator.comparingInt(ConditionInstance::getPriority).reversed());
 
         StringBuilder finalExpression = new StringBuilder();

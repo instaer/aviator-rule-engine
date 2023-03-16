@@ -11,6 +11,7 @@ import com.github.instaer.ruleengine.rule.repository.RuleInfoRepository;
 import com.github.instaer.ruleengine.rule.repository.RulesetInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +47,7 @@ public class RuleManageService {
 
     public Page<RuleInfoEntity> findRuleInfoPage(Long rulesetId, Integer page, Integer size) {
         if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid ruleset id");
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
@@ -55,7 +56,7 @@ public class RuleManageService {
 
     public Page<ConditionInfoEntity> findConditionInfoPage(Long ruleId, Integer page, Integer size) {
         if (null == ruleId || ruleId <= 0) {
-            throw new RuleRunTimeException("invalid rule id");
+            throw new RuleRunTimeException("invalid parameter(ruleId)");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "priority", "id");
@@ -74,7 +75,7 @@ public class RuleManageService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteRulesetInfo(Long rulesetId) {
         if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid ruleset id");
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
 
         List<RuleInfoEntity> findRuleInfoEntityList = ruleInfoRepository.findByRulesetId(rulesetId);
@@ -90,13 +91,12 @@ public class RuleManageService {
     public RuleInfoEntity saveRuleInfo(RuleInfoEntity ruleInfoEntity) {
         Long rulesetId = ruleInfoEntity.getRulesetId();
         if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid ruleset id");
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
         ruleInfoEntity = ruleInfoRepository.save(ruleInfoEntity);
 
         // refresh ruleset
-        RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(rulesetId);
-        refreshRuleset(ruleInfo.getRulesetId());
+        refreshRuleset(rulesetId);
 
         return ruleInfoEntity;
     }
@@ -104,7 +104,7 @@ public class RuleManageService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteRuleInfo(Long ruleId) {
         if (null == ruleId || ruleId <= 0) {
-            throw new RuleRunTimeException("invalid rule id");
+            throw new RuleRunTimeException("invalid parameter(ruleId)");
         }
 
         ruleInfoRepository.deleteById(ruleId);
@@ -116,7 +116,7 @@ public class RuleManageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveConditionInfoList(List<ConditionInfoEntity> conditionInfoEntityList) {
+    public List<ConditionInfoEntity> saveConditionInfoList(List<ConditionInfoEntity> conditionInfoEntityList) {
         if (CollectionUtils.isEmpty(conditionInfoEntityList)) {
             throw new RuleRunTimeException("condition info list is empty");
         }
@@ -130,11 +130,13 @@ public class RuleManageService {
         // remove existing conditionInfo and save the new
         Long ruleId = conditionInfoEntityList.get(0).getRuleId();
         conditionInfoRepository.deleteByRuleId(ruleId);
-        conditionInfoRepository.saveAll(conditionInfoEntityList);
+        conditionInfoEntityList = conditionInfoRepository.saveAll(conditionInfoEntityList);
 
         // refresh ruleset
         RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(ruleId);
         refreshRuleset(ruleInfo.getRulesetId());
+
+        return conditionInfoEntityList;
     }
 
     /**
@@ -144,7 +146,7 @@ public class RuleManageService {
      */
     public void refreshRuleset(Long rulesetId) {
         RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
-                .orElseThrow(() -> new RuleRunTimeException("invalid ruleset id:" + rulesetId));
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId):" + rulesetId));
 
         try {
             String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetId);
@@ -152,10 +154,11 @@ public class RuleManageService {
                 rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
                 rulesetInfoEntity.setExpression(rulesetExpression);
                 rulesetInfoRepository.save(rulesetInfoEntity);
+                log.info("ruleset({}) refresh completed", rulesetId);
                 return;
             }
         } catch (Exception e) {
-            log.warn("", e);
+            log.warn("ruleset({}) cannot be refreshed at this time. ({})", rulesetId, ExceptionUtils.getRootCauseMessage(e));
         }
 
         // reset the ruleset to its initial state

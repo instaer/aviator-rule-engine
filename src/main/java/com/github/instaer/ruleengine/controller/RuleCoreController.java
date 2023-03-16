@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 public class RuleCoreController {
 
@@ -15,7 +17,7 @@ public class RuleCoreController {
     private RuleCoreService ruleCoreService;
 
     @PostMapping("/executeRuleset")
-    public ResponseVO<Boolean> executeRuleset(@RequestBody RulesetInfoDTO dto) {
+    public ResponseVO<Map<String, Object>> executeRuleset(@RequestBody RulesetInfoDTO dto) {
         return ResponseVO.ok(ruleCoreService.executeRuleset(dto.getRulesetCode(), dto.getParaMap()));
     }
 }
