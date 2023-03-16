@@ -1,5 +1,5 @@
 # aviator-rule-engine
-基于AviatorScript的规则引擎实例
+基于AviatorScript的规则引擎
 
 ## Requirements
 - Spring Boot 2.0+
@@ -8,55 +8,70 @@
 
 ## Tables Required
 <details>
-  <summary>t_rule_info</summary>
+  <summary>条件(t_condition_info)</summary>
 
   ```mysql
-CREATE TABLE `t_rule_info` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '规则id',
-  `code` VARCHAR(20) NOT NULL COMMENT '规则编码（唯一 用于调用方进行绑定）',
-  `name` VARCHAR(20) NOT NULL COMMENT '规则名称',
-  `remark` VARCHAR(128) NULL COMMENT '规则备注',
-  `expression` VARCHAR(1024) NULL COMMENT '规则表达式',
-  `mode` TINYINT(4) UNSIGNED NOT NULL DEFAULT 1 COMMENT '模式（1：规则已设置  2：表达式已设置）',
-  `status` TINYINT(4) UNSIGNED NOT NULL DEFAULT 1 COMMENT '状态（1：启用  0：禁用）',
+CREATE TABLE `t_condition_info` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `rule_id` bigint unsigned NOT NULL COMMENT '所属规则id',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '条件名称',
+  `remark` varchar(128) DEFAULT NULL COMMENT '条件备注',
+  `variable_name` varchar(32) NOT NULL COMMENT '变量名（作为参数传入的唯一标识符）',
+  `reference_value` varchar(256) NOT NULL COMMENT '参考值',
+  `relation_type` varchar(32) NOT NULL COMMENT '条件关系运算类型',
+  `logic_type` varchar(32) NOT NULL COMMENT '条件逻辑运算类型',
+  `priority` smallint unsigned NOT NULL COMMENT '条件优先级（值越大优先级越高）',
   PRIMARY KEY (`id`),
-	KEY `ix_code` (`code`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '规则信息表';
+  KEY `ix_rule_id` (`rule_id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '条件';
   ```
 </details>
 
 <details>
-  <summary>t_condition_info</summary>
+  <summary>规则(t_rule_info)</summary>
 
   ```mysql
-CREATE TABLE `t_condition_info` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '条件id',
-  `rule_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '所属规则id',
-  `name` VARCHAR(20) NOT NULL COMMENT '条件名称',
-  `remark` VARCHAR(128) NULL COMMENT '条件备注',
-  `variable_name` varchar(32) NOT NULL COMMENT '变量名（作为变量传入的唯一标识符）',
-   `reference_value` varchar(256) NOT NULL COMMENT '参考值',
-  `operate_type` TINYINT(4) UNSIGNED NOT NULL COMMENT '条件运算类型',
-  `logic_type` TINYINT(4) UNSIGNED NOT NULL COMMENT '条件逻辑类型（1-当前条件满足则继续，否则跳过后续条件 2-当前条件满足则跳过后续条件，否则继续）',
-  `priority` SMALLINT(15) UNSIGNED NOT NULL COMMENT '条件优先级（值越大优先级越高）',
+CREATE TABLE `t_rule_info` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `ruleset_id` bigint NOT NULL COMMENT '所属规则集ID',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则名称',
+  `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '规则备注',
+  `return_values` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '返回值集合',
   PRIMARY KEY (`id`),
-  KEY `ix_rule_id` (`rule_id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '条件信息表';
+  KEY `ix_ruleset_id` (`ruleset_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '规则';
+  ```
+</details>
+
+<details>
+  <summary>规则集(t_ruleset_info)</summary>
+
+  ```mysql
+CREATE TABLE `t_ruleset_info` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则集编码',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则集名称',
+  `remark` varchar(128) DEFAULT NULL COMMENT '规则集备注',
+  `expression` varchar(1024) DEFAULT NULL COMMENT '规则集表达式',
+  `mode` tinyint NOT NULL DEFAULT '0' COMMENT '模式（0：创建中  1：已创建）',
+  PRIMARY KEY (`id`),
+  KEY `ix_code` (`code`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '规则集';
   ```
 </details>
 
 ## 支持的条件逻辑运算类型
-[ConditionLogicType.java](https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionLogicType.java)
+[ConditionLogicType](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/java/com/github/instaer/ruleengine/constants/ConditionLogicType.java)
 
 | 逻辑类型 | 值 |               描述               |
 | :---: | :---: | :------------------------------: |
-|  AND  |  &&   | 所在条件单元必须满足，否则条件单元值为false |
-|  OR   | \|\|  |   所在条件单元如果满足，则条件单元值为true   |
+|  AND  |  &&   | 如果当前条件单元为真，则继续向后执行，否则跳过后面的条件单元，直接返回假 |
+|  OR   | \|\|  |   如果当前条件单元为真，则跳过后面的条件单元直接返回真，否则继续向后执行   |
 
 ## 支持的条件关系运算类型
-[ConditionRelationType.java](https://github.com/instaer/aviator-rule-engine/blob/e4f20a81977c7368dd926cdef7b2390de916f140/src/main/java/com/test/ruleengine/constants/ConditionRelationType.java)
+[ConditionRelationType](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/java/com/github/instaer/ruleengine/constants/ConditionRelationType.java)
 
-* 关系型条件
+* 关系类型条件
 
 |   条件类型   |      描述      |
 | :-----------: | :------------: |
@@ -67,7 +82,7 @@ CREATE TABLE `t_condition_info` (
 |     LESS      |   小于（<）    |
 |    GREATER    |   大于（>）    |
 
-* 集合型条件
+* 集合类型条件
 
 |       条件类型       |  描述  |
 | :-------------------: | :----: |
@@ -82,15 +97,15 @@ CREATE TABLE `t_condition_info` (
 | :-------: | :--: |
 |  REGULAR  | 正则 |
 
-## 条件组合
-同一规则下的所有条件可以进行组合，组成一个完整的规则表达式。
+## 条件
+条件是最小的执行单元，例如：`x >= 99`。
 
-通常条件组合为两个条件的组合，也支持三个及三个以上条件的组合。
+多个条件可以按照关系运算类型、逻辑运算类型组合成一个规则。例如：`x >= 99 || y < 45`。
 
-在实践中，不建议配置三个及三个以上的条件组合，组合条件数量过多影响规则可读性及维护性，可以考虑将条件拆分到多个规则中。
+当然单个条件本身也是一个规则，可以认为`x >= 99`等同于`x >= 99 && true`。
 
-## 条件优先级
-条件优先级决定了条件之间的组合次序。一个规则下所有条件按优先级进行排序，优先级越高，组合次序越靠前。
+### 条件优先级
+条件优先级决定了条件之间的组合次序和执行顺序。同一个规则下所有条件按优先级进行排序，优先级越高，组合次序和执行顺序越靠前。（同一规则下，不能存在优先级相同的条件，保证执行顺序唯一。）
 
 例如，定义一个规则下的条件表达式及优先级如下：
 
@@ -104,47 +119,212 @@ CREATE TABLE `t_condition_info` (
 最后生成的规则表达式为：
 > ((x ==1 || y>2) && z <= 3) && v != 4
 
-## 条件单元
-条件单元是逻辑运算类型作用的目标对象，逻辑运算类型左侧（沿优先级最高的方向）的部分称为它所在的条件单元。
-以规则表达式为例：
+同时注意，在每两个条件的组合两侧添加了括号，保证了括号内条件的优先级。
 
->((x ==1 || y>2) && z <= 3) && v != 4
+### 条件逻辑运算
+每个条件都附带逻辑运算类型，当两个条件之间进行组合时，高优先级条件的逻辑运算作用于低优先级条件，而低优先级条件作用于条件组合整体。
 
-* 第一个“||”逻辑运算类型所在的条件单元为：x ==1
-* 第二个“||”逻辑运算类型所在的条件单元为：v !=4（优先级最低的逻辑运算类型在生成表达式时自动忽略）
-* 第一个“&&”逻辑运算类型所在的条件单元为：(x ==1 || y>2)
-* 第二个“&&”逻辑运算类型所在的条件单元为：((x ==1 || y>2) && z <= 3)
+以如下表达式为例：
 
-## 条件与条件单元的关系
-条件单元是条件组合场景中引申出的概念，主要用于定位逻辑运算类型作用的目标对象。
+>`((x == 1 || y > 2) && z <= 3) && v != 4`
 
-条件是规则组成的基本单位，用于定义条件本身的属性。
+* 条件`x == 1`逻辑运算类型为`||`，作用于条件`y > 2`
+* 条件`y > 2`逻辑运算类型为`&&`，由于和左侧条件`x == 1`进行组合，所以作用于右侧条件`z <= 3`
+* 第二个“||”逻辑运算类型所在的条件为：`v !=4`（优先级最低的逻辑运算类型在生成表达式时自动忽略）
+* 条件`z <= 3`逻辑运算类型为`&&`，由于和左侧条件组合`(x == 1 || y> 2)`进行组合，所以作用于右侧条件`v != 4`
+* 条件`v != 4`优先级最低，在生成规则表达式时将会自动忽略其逻辑运算类型
 
-一个条件单元包含一个或多个条件，一个条件可以在多个条件单元中，条件自身作为一个最小的条件单元。
+### 条件关系运算
+每个条件都附带条件关系类型，用于和参考值进行比较。
+
+例如条件`x >= 99`，`x`是条件的变量名，作为参数传入的唯一标识符，`>=`是条件的关系运算符（对应的关系运算类型为ConditionRelationType.EQUAL），`99`是条件的参考值，用于和以`x`为变量名的参数值进行对应的关系运算。
+
+## 规则
+条件之上就是规则，规则相当于一个条件组合，一个规则下附带一个条件列表，在生成规则表达式时，条件列表中的所有条件将自动进行组合。
+
+## 规则集
+规则集是规则引擎执行的对象，一个规则集下包含一个或多个规则，默认添加的规则集处于`RulesetMode.BUILDING`模式，表示当前的规则集表达式未生成，规则集处于不可用状态。当规则集下存在规则，并且每个规则下存在条件时，规则集自动切换为`RulesetMode.BUILT`模式，并且生成规则集表达式。
 
 ## Getting started
 
 ### Example
 
-在规则管理中添加一条规则，规则编码定义为BUSINESS_RULE_001，在规则下添加以下两个条件：
+如下为一个产品费率计算规则：
 
-| 条件  |  变量名  | 参考值 | 逻辑运算类型 |    关系运算类型     | 优先级 |
-| :---: | :------: | :----: | :----------: | :-----------------: | :----: |
-| 条件1 |  price   | 49.99  |  AND（&&）   | GREATER_EQUAL（>=） |   2    |
-| 条件2 | discount |  0.85  |   AND（&&)   |      LESS（<）      |   1    |
+| 年龄（AGE） | 额度（AMT） | 费用（PREM） | 费率（RATE）‰ |
+| :---------: | :---------: | :----------: | :-----------: |
+|    0~3岁    |   1000000   |     67.9     |    0.0679     |
+|   4~11岁    |   1000000   |    198.2     |    0.1982     |
+|    12岁     |   1000000   |      18      |     0.018     |
 
-最终生成条件表达式为：
-> price >= 49.99 && discount < 0.85
+需要按上述规则，通过年龄、额度来动态计算0~12岁的儿童产品的费用和费率。
 
-从外部调用中，传入price = 50，discount = 0.75，计算表达式值为true。
+1. 首先添加规则集，指定规则集编码为`RULEST_RATE_CALC`，参数如下：
+```json
+{
+    "code": "RULEST_RATE_CALC",
+    "name": "ruleset for rate calculate"
+}
+```
 
+2. 在当前规则集下添加规则，并且定义返回值集合，用于接收规则引擎执行的返回值 ，例如`PREM:67.9,RATE:0.0679`， 含义就是如果满足规则对应的条件，就返回一个map集合：
+```json
+{
+    "PREM": 67.9,
+    "RATE": 0.0679
+}
+```
+通过返回值集合中定义的返回值变量名`PREM`和`RATE`，可以从map集合中获取对应的值。
+
+在当前例子中，需要添加三组规则，参数如下：
+```json
+{
+    "rulesetId": 2,
+    "name": "rule for age(0-3)",
+    "returnValues": "PREM:67.9,RATE:0.0679"
+}
+
+{
+    "rulesetId": 2,
+    "name": "rule for age(4-11)",
+    "returnValues": "PREM:198.2,RATE:0.1982"
+}
+
+{
+    "rulesetId": 2,
+    "name": "rule for age(12)",
+    "returnValues": "PREM:18,RATE:0.018"
+}
+```
+
+3. 在每个对应规则下添加对应的条件。
+
+<u><b>rule for age(0-3)</b></u>
+```json
+[
+    {
+        "ruleId": 4,
+        "name": "children age lower",
+        "variableName": "AGE",
+        "referenceValue": "0",
+        "relationType": "GREATER_EQUAL",
+        "logicType": "AND",
+        "priority": 10
+    },
+    {
+        "ruleId": 4,
+        "name": "children age upper",
+        "variableName": "AGE",
+        "referenceValue": "3",
+        "relationType": "LESS_EQUAL",
+        "logicType": "AND",
+        "priority": 9
+    },
+    {
+        "ruleId": 4,
+        "name": "amount total",
+        "variableName": "AMT",
+        "referenceValue": "1000000",
+        "relationType": "EQUAL",
+        "logicType": "AND",
+        "priority": 8
+    }
+]
+```
+
+<u><b>rule for age(4-11)</b></u>
+```json
+[
+    {
+        "ruleId": 4,
+        "name": "children age lower",
+        "variableName": "AGE",
+        "referenceValue": "4",
+        "relationType": "GREATER_EQUAL",
+        "logicType": "AND",
+        "priority": 10
+    },
+    {
+        "ruleId": 4,
+        "name": "children age upper",
+        "variableName": "AGE",
+        "referenceValue": "11",
+        "relationType": "LESS_EQUAL",
+        "logicType": "AND",
+        "priority": 9
+    },
+    {
+        "ruleId": 4,
+        "name": "amount total",
+        "variableName": "AMT",
+        "referenceValue": "1000000",
+        "relationType": "EQUAL",
+        "logicType": "AND",
+        "priority": 8
+    }
+]
+```
+
+<u><b>rule for age(12)</b></u>
+```json
+[
+    {
+        "ruleId": 4,
+        "name": "children age",
+        "variableName": "AGE",
+        "referenceValue": "12",
+        "relationType": "EQUAL",
+        "logicType": "AND",
+        "priority": 10
+    },
+    {
+        "ruleId": 4,
+        "name": "amount total",
+        "variableName": "AMT",
+        "referenceValue": "1000000",
+        "relationType": "EQUAL",
+        "logicType": "AND",
+        "priority": 9
+    }
+]
+```
+4. 执行规则
+
+假设现在要计算年龄为9岁的儿童，额度为1000000时的费用和费率，规则引擎请求参数为：
+```json
+{
+    "rulesetCode": "RULEST_RATE_CALC",
+    "paraMap": {
+        "AGE": 9,
+        "AMT": 1000000
+    }
+}
+```
+
+规则引擎返回结果：
+```json
+{
+    "status": 200,
+    "success": true,
+    "message": null,
+    "body": {
+        "RATE": 0.1982,
+        "PREM": 198.2
+    }
+}
+```
+
+在编码中，调用方式如下：
 ```java
 @Autowired
 private RuleCoreService ruleCoreService;
 
-String ruleCode = "BUSINESS_RULE_001";
 Map<String, Object> paraMap = new HashMap<>();
-paramMap.put("price", 50);
-paramMap.put("discount", 0.75);
-boolean result = ruleCoreService.executeRule(ruleCode, paramMap);
+paraMap.put("AGE", 9);
+paraMap.put("AMT", 1000000);
+String rulesetCode = "RULEST_RATE_CALC";
+Map<String, Object> resultMap = ruleCoreService.executeRuleset(rulesetCode, paraMap);
+
+System.out.println("费用：" + resultMap.get("PREM"));// 198.2
+System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 ```
