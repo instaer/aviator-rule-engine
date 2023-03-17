@@ -26,7 +26,7 @@ public class RuleManageController {
     @Autowired
     private RuleManageService ruleManageService;
 
-    @GetMapping("logicTypeMap")
+    @GetMapping("/logicTypeMap")
     public ResponseVO<Map<String, String>> logicTypeMap() {
         return ResponseVO.ok(ConditionLogicType.conditionLogicTypeMap);
     }

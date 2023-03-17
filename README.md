@@ -1,5 +1,5 @@
 # aviator-rule-engine
-基于AviatorScript的规则引擎实例
+一个基于AviatorScript的简单规则引擎实例。将规则划分为规则集、规则、条件三个维度，可以满足业务规则的通用性配置，同时也可以进行扩展。
 
 ## Requirements
 - Spring Boot 2.0+
@@ -91,7 +91,7 @@ CREATE TABLE `t_ruleset_info` (
 | SOME_CONTAINS_IN_LIST |  包含  |
 | NONE_CONTAINS_IN_LIST | 不包含 |
 
-* 正则型条件
+* 正则类型条件
 
 | 条件类型 | 描述 |
 | :-------: | :--: |
@@ -128,10 +128,10 @@ CREATE TABLE `t_ruleset_info` (
 
 >`((x == 1 || y > 2) && z <= 3) && v != 4`
 
-* 条件`x == 1`逻辑运算类型为`||`，作用于条件`y > 2`
-* 条件`y > 2`逻辑运算类型为`&&`，由于和左侧条件`x == 1`进行组合，所以作用于右侧条件`z <= 3`
-* 条件`z <= 3`逻辑运算类型为`&&`，由于和左侧条件组合`(x == 1 || y> 2)`进行组合，所以作用于右侧条件`v != 4`
-* 条件`v != 4`优先级最低，在生成规则表达式时将会自动忽略其逻辑运算类型
+* 条件`x == 1`逻辑运算类型为`||`，作用于条件`y > 2`。
+* 条件`y > 2`逻辑运算类型为`&&`，由于和左侧条件`x == 1`进行组合，所以作用于右侧条件`z <= 3`。
+* 条件`z <= 3`逻辑运算类型为`&&`，由于和左侧条件组合`(x == 1 || y> 2)`进行组合，所以作用于右侧条件`v != 4`。
+* 条件`v != 4`优先级最低，在生成规则表达式时将会自动忽略其逻辑运算类型。
 
 ### 条件关系运算
 每个条件都附带条件关系类型，用于和参考值进行比较。
@@ -146,7 +146,7 @@ CREATE TABLE `t_ruleset_info` (
 
 ## Getting started
 
-### Example
+### 一个计算费用、费率的简单示例
 
 如下为一个产品费率计算规则：
 
@@ -264,7 +264,7 @@ CREATE TABLE `t_ruleset_info` (
 ]
 ```
 
-<u><b>rule for age(12)</b></u>
+<b><u>rule for age(12)</u></b>
 ```json
 [
     {
@@ -327,3 +327,44 @@ Map<String, Object> resultMap = ruleCoreService.executeRuleset(rulesetCode, para
 System.out.println("费用：" + resultMap.get("PREM"));// 198.2
 System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 ```
+
+## 接口说明
+项目中主要有两大类接口，包括外部请求接口和内部管理接口。
+
+### 外部请求接口
+* 执行规则集  
+> /executeRuleset
+
+### 内部管理接口
+* 查询所有逻辑运算类型
+> /logicTypeMap
+
+* 查询所有关系运算类型
+> /relationTypeMap
+
+* 查询规则集（分页）
+> /findRulesetInfoPage
+
+* 查询规则集下的所有规则（分页）
+> /findRuleInfoPage
+
+* 查询规则下的所有条件（分页）
+> /findConditionInfoPage
+
+* 保存规则集
+> /saveRulesetInfo
+
+* 删除规则集
+> /deleteRulesetInfo
+
+* 保存规则
+> /saveRuleInfo
+
+* 删除规则
+> /deleteRuleInfo
+
+* 保存规则下的所有条件
+> /saveConditionInfoList
+
+* 刷新规则集
+> /refreshRuleset
