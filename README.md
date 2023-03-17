@@ -209,7 +209,7 @@ CREATE TABLE `t_ruleset_info` (
 ```json
 [
     {
-        "ruleId": 4,
+        "ruleId": 2,
         "name": "children age lower",
         "variableName": "AGE",
         "referenceValue": "0",
@@ -218,7 +218,7 @@ CREATE TABLE `t_ruleset_info` (
         "priority": 10
     },
     {
-        "ruleId": 4,
+        "ruleId": 2,
         "name": "children age upper",
         "variableName": "AGE",
         "referenceValue": "3",
@@ -227,7 +227,7 @@ CREATE TABLE `t_ruleset_info` (
         "priority": 9
     },
     {
-        "ruleId": 4,
+        "ruleId": 2,
         "name": "amount total",
         "variableName": "AMT",
         "referenceValue": "1000000",
@@ -275,7 +275,7 @@ CREATE TABLE `t_ruleset_info` (
 ```json
 [
     {
-        "ruleId": 4,
+        "ruleId": 5,
         "name": "children age",
         "variableName": "AGE",
         "referenceValue": "12",
@@ -284,7 +284,7 @@ CREATE TABLE `t_ruleset_info` (
         "priority": 10
     },
     {
-        "ruleId": 4,
+        "ruleId": 5,
         "name": "amount total",
         "variableName": "AMT",
         "referenceValue": "1000000",
@@ -308,7 +308,7 @@ elsif((AGE >= 4 && AGE <= 11) && AMT == 1000000){
 seq.put(rmap, 'PREM', 198.2);
 seq.put(rmap, 'RATE', 0.1982);
 }
-elsif(AGE == 12){
+elsif(AGE == 12 && AMT == 1000000){
 seq.put(rmap, 'PREM', 18);
 seq.put(rmap, 'RATE', 0.018);
 }
