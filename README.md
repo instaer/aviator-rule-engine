@@ -288,7 +288,30 @@ CREATE TABLE `t_ruleset_info` (
     }
 ]
 ```
-4. 执行规则
+
+4. 生成规则表达式。
+
+添加规则集、规则、条件之后，自动生成规则表达式如下：
+```
+let rmap = seq.map();
+if((AGE >= 0 && AGE <= 3) && AMT == 1000000){
+seq.put(rmap, 'PREM', 67.9);
+seq.put(rmap, 'RATE', 0.0679);
+}
+elsif((AGE >= 4 && AGE <= 11) && AMT == 1000000){
+seq.put(rmap, 'PREM', 198.2);
+seq.put(rmap, 'RATE', 0.1982);
+}
+elsif(AGE == 12){
+seq.put(rmap, 'PREM', 18);
+seq.put(rmap, 'RATE', 0.018);
+}
+return rmap;
+```
+
+另外，对于所有浮点数类型的入参和出参，在AviatorScript实际执行上述表达式时，会将所有浮点数都解析为`decimal`，保证高精度运算的要求。（在默认配置的引擎实例中已开启此配置项`Options.ALWAYS_PARSE_FLOATING_POINT_NUMBER_INTO_DECIMAL`）。
+
+5. 执行规则集
 
 假设现在要计算年龄为9岁的儿童，额度为1000000时的费用和费率，规则引擎请求参数为：
 ```json
@@ -314,7 +337,9 @@ CREATE TABLE `t_ruleset_info` (
 }
 ```
 
-在编码中，调用方式如下：
+6. 接口调用
+
+在服务中，调用接口方式如下：
 ```java
 @Autowired
 private RuleCoreService ruleCoreService;
@@ -328,6 +353,8 @@ Map<String, Object> resultMap = ruleCoreService.executeRuleset(rulesetCode, para
 System.out.println("费用：" + resultMap.get("PREM"));// 198.2
 System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 ```
+
+或者通过外部接口直接调用`/executeRuleset`。
 
 ## 接口说明
 项目中主要有两大类接口，包括外部请求接口和内部管理接口。
