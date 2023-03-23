@@ -1,5 +1,5 @@
 # aviator-rule-engine
-一个基于AviatorScript的简单规则引擎实例。
+一个基于[AviatorScript](https://github.com/killme2008/aviatorscript)的简单规则引擎实例。
 
 将规则划分为规则集、规则、条件三个维度，可以满足业务规则的通用性配置，同时也可以进行扩展。
 
