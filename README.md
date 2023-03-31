@@ -402,3 +402,8 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 
 #### 刷新规则集
 * /refreshRuleset
+
+## 使用方式说明
+建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。
+
+目前规则维护仅提供接口，请参考[内部管理接口](#内部管理接口)，建议按照：<u>规则集</u>-><u>规则</u>-><u>条件</u>的顺序进行配置。
