@@ -407,6 +407,6 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 ## 使用说明
 建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。
 
-在服务部署前，请在配置的数据库中创建三张数据表，参考：[创建数据表](#创建数据表) 。
+在服务部署前，请在配置的数据库中[创建数据表](#创建数据表) 。
 
-目前规则维护仅提供接口，请参考[内部管理接口](#内部管理接口)，建议按照：<ins>规则集</ins>-><ins>规则</ins>-><ins>条件</ins>的顺序进行配置。
+目前规则维护仅提供[内部管理接口](#内部管理接口)，建议按照：<ins>规则集</ins>-><ins>规则</ins>-><ins>条件</ins>的顺序进行配置。
