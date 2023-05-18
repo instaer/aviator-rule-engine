@@ -368,41 +368,41 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 
 ### 外部请求接口
 #### 执行规则集  
-* /executeRuleset
+* localhost:8000/api/executeRuleset
 
 ### 内部管理接口
 #### 查询所有逻辑运算类型
-* /logicTypeMap
+* localhost:8000/admin/logicTypeMap
 
 #### 查询所有关系运算类型
-* /relationTypeMap
+* localhost:8000/admin/relationTypeMap
 
 #### 查询规则集（分页）
-* /findRulesetInfoPage
+* localhost:8000/admin/findRulesetInfoPage
 
 #### 查询规则集下的所有规则（分页）
-* /findRuleInfoPage
+* localhost:8000/admin/findRuleInfoPage
 
 #### 查询规则下的所有条件（分页）
-* /findConditionInfoPage
+* localhost:8000/admin/findConditionInfoPage
 
 #### 保存规则集
-* /saveRulesetInfo
+* localhost:8000/admin/saveRulesetInfo
 
 #### 删除规则集
-* /deleteRulesetInfo
+* localhost:8000/admin/deleteRulesetInfo
 
 #### 保存规则
-* /saveRuleInfo
+* localhost:8000/admin/saveRuleInfo
 
 #### 删除规则
-* /deleteRuleInfo
+* localhost:8000/admin/deleteRuleInfo
 
 #### 保存规则下的所有条件
-* /saveConditionInfoList
+* localhost:8000/admin/saveConditionInfoList
 
 #### 刷新规则集
-* /refreshRuleset
+* localhost:8000/admin/refreshRuleset
 
 ## 使用说明
 建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。

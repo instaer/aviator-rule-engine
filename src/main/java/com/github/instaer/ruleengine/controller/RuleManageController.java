@@ -12,14 +12,12 @@ import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
 import com.github.instaer.ruleengine.rule.service.RuleManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@RequestMapping("admin")
 @RestController
 public class RuleManageController {
 
