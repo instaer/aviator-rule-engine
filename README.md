@@ -136,6 +136,7 @@ CREATE TABLE `t_ruleset_info` (
 * 条件`y > 2`逻辑运算类型为`&&`，由于和左侧条件`x == 1`进行组合，所以作用于右侧条件`z <= 3`。
 * 条件`z <= 3`逻辑运算类型为`&&`，由于和左侧条件组合`(x == 1 || y> 2)`进行组合，所以作用于右侧条件`v != 4`。
 * 条件`v != 4`优先级最低，在生成规则表达式时将会自动忽略其逻辑运算类型。
+* 假设条件`v != 4`逻辑运算类型为`||`，则整个表达式等价于`(((x == 1 || y > 2) && z <= 3) && v != 4) || false`；假设条件`v != 4`逻辑运算类型为`||`，则整个表达式等价于`(((x == 1 || y > 2) && z <= 3) && v != 4) && true`。
 
 ### 条件关系运算
 每个条件都附带条件关系类型，用于和参考值进行比较。
@@ -162,7 +163,7 @@ CREATE TABLE `t_ruleset_info` (
 
 需要按上述规则，通过年龄、额度来动态计算0~12岁的儿童产品的费用和费率。
 
-1. 添加规则集
+* 添加规则集
 
 指定规则集编码为`RULEST_RATE_CALC`，参数如下：
 ```json
@@ -172,7 +173,7 @@ CREATE TABLE `t_ruleset_info` (
 }
 ```
 
-2. 在当前规则集下添加规则
+* 在当前规则集下添加规则
 
 定义返回值集合，用于接收规则引擎执行的返回值 ，例如`PREM:67.9,RATE:0.0679`， 含义就是如果满足规则对应的条件，就返回一个map集合：
 ```json
@@ -204,7 +205,7 @@ CREATE TABLE `t_ruleset_info` (
 }
 ```
 
-3. 在每个对应规则下添加条件
+* 在每个对应规则下添加条件
 
 <u><b>rule for age(0-3)</b></u>
 ```json
@@ -296,7 +297,7 @@ CREATE TABLE `t_ruleset_info` (
 ]
 ```
 
-4. 生成规则表达式
+* 生成规则表达式
 
 添加规则集、规则、条件之后，自动生成规则表达式如下：
 ```
@@ -318,7 +319,7 @@ return rmap;
 
 另外，对于所有浮点数类型的入参和出参，在AviatorScript实际执行上述表达式时，会将所有浮点数都解析为`decimal`，保证高精度运算的要求。（在默认配置的引擎实例中已开启此配置项`Options.ALWAYS_PARSE_FLOATING_POINT_NUMBER_INTO_DECIMAL`）。
 
-5. 执行规则集
+* 执行规则集
 
 假设现在要计算年龄为9岁的儿童，额度为1000000时的费用和费率，规则引擎请求参数为：
 ```json
@@ -344,7 +345,7 @@ return rmap;
 }
 ```
 
-6. 接口调用
+* 接口调用
 
 在服务中，调用接口方式如下：
 ```java
@@ -367,42 +368,42 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 项目中主要有两大类接口，包括外部请求接口和内部管理接口。
 
 ### 外部请求接口
-#### 执行规则集  
-* localhost:8000/api/executeRuleset
+* 执行规则集
+> `localhost:8000/api/executeRuleset`
 
 ### 内部管理接口
-#### 查询所有逻辑运算类型
-* localhost:8000/admin/logicTypeMap
+* 查询所有逻辑运算类型
+> `localhost:8000/admin/logicTypeMap`
 
-#### 查询所有关系运算类型
-* localhost:8000/admin/relationTypeMap
+* 查询所有关系运算类型
+> `localhost:8000/admin/relationTypeMap`
 
-#### 查询规则集（分页）
-* localhost:8000/admin/findRulesetInfoPage
+* 查询规则集（分页）
+> `localhost:8000/admin/findRulesetInfoPage`
 
-#### 查询规则集下的所有规则（分页）
-* localhost:8000/admin/findRuleInfoPage
+* 查询规则集下的所有规则（分页）
+> `localhost:8000/admin/findRuleInfoPage`
 
-#### 查询规则下的所有条件（分页）
-* localhost:8000/admin/findConditionInfoPage
+* 查询规则下的所有条件（分页）
+> `localhost:8000/admin/findConditionInfoPage`
 
-#### 保存规则集
-* localhost:8000/admin/saveRulesetInfo
+* 保存规则集
+> `localhost:8000/admin/saveRulesetInfo`
 
-#### 删除规则集
-* localhost:8000/admin/deleteRulesetInfo
+* 删除规则集
+> `localhost:8000/admin/deleteRulesetInfo`
 
-#### 保存规则
-* localhost:8000/admin/saveRuleInfo
+* 保存规则
+> `localhost:8000/admin/saveRuleInfo`
 
-#### 删除规则
-* localhost:8000/admin/deleteRuleInfo
+* 删除规则
+> `localhost:8000/admin/deleteRuleInfo`
 
-#### 保存规则下的所有条件
-* localhost:8000/admin/saveConditionInfoList
+* 保存规则下的所有条件
+> `localhost:8000/admin/saveConditionInfoList`
 
-#### 刷新规则集
-* localhost:8000/admin/refreshRuleset
+* 刷新规则集
+> `localhost:8000/admin/refreshRuleset`
 
 ## 使用说明
 建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。
