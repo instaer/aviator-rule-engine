@@ -70,7 +70,7 @@ public class ExpressionBuildService {
         String defaultReturnValues = rulesetInfoEntity.getDefaultReturnValues();
         if (StringUtils.isNotBlank(defaultReturnValues)) {
             String initRMapValue = Arrays.stream(defaultReturnValues.split(",")).map(v -> v.split(":"))
-                    .map(a -> "'" + a[0] + "', " + a[1]).collect(Collectors.joining(", "));
+                    .map(a -> "'" + a[0] + "', " + stringValueEscape(a[1])).collect(Collectors.joining(", "));
             rulesetExpression.append(initRMapValue);
         }
         rulesetExpression.append(");\n");
@@ -86,7 +86,9 @@ public class ExpressionBuildService {
             String ruleExpression = buildRuleExpression(conditionInfos);
             rulesetExpression.append(i == 0 ? "if(" : "elsif(").append(ruleExpression).append("){\n");
             Arrays.stream(ruleInfo.getReturnValues().split(",")).map(v -> v.split(":"))
-                    .forEach(a -> rulesetExpression.append("seq.put(rmap, '").append(a[0]).append("', ").append(a[1])
+                    .forEach(a -> rulesetExpression.append("seq.put(rmap, '")
+                            .append(a[0]).append("', ")
+                            .append(stringValueEscape(a[1]))
                             .append(");\n"));
             rulesetExpression.append("}\n");
         }
@@ -114,16 +116,10 @@ public class ExpressionBuildService {
             ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
-            // wrap non-numeric value with single quote
-            String referenceValue = conditionInfo.getReferenceValue();
-            if (!NumberUtils.isDigits(referenceValue)) {
-                referenceValue = "'" + referenceValue.replace("'", "\\'") + "'";
-            }
-
             ConditionInstance conditionInstance = ConditionInstance.builder()
                     .variableName(conditionInfo.getVariableName())
                     .relationType(relationType)
-                    .referenceValue(referenceValue)
+                    .referenceValue(stringValueEscape(conditionInfo.getReferenceValue()))
                     .priority(conditionInfo.getPriority())
                     .logicType(logicType)
                     .build();
@@ -155,5 +151,19 @@ public class ExpressionBuildService {
 
         log.info("## build condition expression success => {}", finalExpression);
         return finalExpression.toString();
+    }
+
+    /**
+     * wrap non-boolean and non-numeric string value with single quote
+     *
+     * @param value
+     * @return
+     */
+    private static String stringValueEscape(String value) {
+        if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {
+            return value;
+        }
+
+        return NumberUtils.isDigits(value) ? value : "'" + value.replace("'", "\\'") + "'";
     }
 }
