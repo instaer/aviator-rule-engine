@@ -151,7 +151,7 @@ public class RuleManageService {
                 .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId):" + rulesetId));
 
         try {
-            String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetId);
+            String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
             if (StringUtils.isNotEmpty(rulesetExpression)) {
                 rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
                 rulesetInfoEntity.setExpression(rulesetExpression);

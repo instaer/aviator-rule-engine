@@ -7,6 +7,7 @@ import com.github.instaer.ruleengine.constants.ConditionRelationType;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import com.github.instaer.ruleengine.rule.entity.ConditionInfoEntity;
 import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
+import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
 import com.github.instaer.ruleengine.rule.repository.ConditionInfoRepository;
 import com.github.instaer.ruleengine.rule.repository.RuleInfoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -44,10 +46,11 @@ public class ExpressionBuildService {
     /**
      * build ruleset expressions by combining multiple rules
      *
-     * @param rulesetId
+     * @param rulesetInfoEntity
      * @return
      */
-    public String buildRulesetExpression(Long rulesetId) {
+    public String buildRulesetExpression(RulesetInfoEntity rulesetInfoEntity) {
+        Long rulesetId = rulesetInfoEntity.getId();
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
@@ -61,7 +64,15 @@ public class ExpressionBuildService {
             throw new RuleRunTimeException("all rules in the ruleset must set the return value");
         }
 
-        StringBuilder rulesetExpression = new StringBuilder("let rmap = seq.map();\n");
+        StringBuilder rulesetExpression = new StringBuilder("let rmap = seq.map(");
+        String defaultReturnValues = rulesetInfoEntity.getDefaultReturnValues();
+        if (StringUtils.isNotBlank(defaultReturnValues)) {
+            String initRMapValue = Arrays.stream(defaultReturnValues.split(",")).map(v -> v.split(":"))
+                    .map(a -> "'" + a[0] + "', " + a[1]).collect(Collectors.joining(", "));
+            rulesetExpression.append(initRMapValue);
+        }
+        rulesetExpression.append(");\n");
+
         for (int i = 0; i < ruleInfos.size(); i++) {
             RuleInfoEntity ruleInfo = ruleInfos.get(i);
             List<ConditionInfoEntity> conditionInfos = conditionInfoRepository.findByRuleId(ruleInfo.getId());

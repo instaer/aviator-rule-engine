@@ -56,6 +56,7 @@ CREATE TABLE `t_ruleset_info` (
   `code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则集编码',
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则集名称',
   `remark` varchar(128) DEFAULT NULL COMMENT '规则集备注',
+  `default_return_values` varchar(256) DEFAULT NULL COMMENT '默认返回值集合',
   `expression` varchar(1024) DEFAULT NULL COMMENT '规则集表达式',
   `mode` tinyint NOT NULL DEFAULT '0' COMMENT '模式（0：创建中  1：已创建）',
   PRIMARY KEY (`id`),
@@ -149,6 +150,9 @@ CREATE TABLE `t_ruleset_info` (
 ## 规则集
 规则集是规则引擎执行的对象，一个规则集下包含一个或多个规则，默认添加的规则集处于`RulesetMode.BUILDING`模式，表示当前的规则集表达式未生成，规则集处于不可用状态。当规则集下存在规则，并且每个规则下存在条件时，规则集自动切换为`RulesetMode.BUILT`模式，并且生成规则集表达式。
 
+### 规则集默认返回值集合
+规则集支持设置默认返回值。在设置规则时，可以设置当前规则匹配时的返回值，对于规则集下所有规则均不匹配的情况，可以在规则集设置默认返回值`defaultReturnValues`，数据格式和在规则下设置返回值集合相同（`e.g. returnVariable1:returnValue1,returnVariable2:returnValue2`）。
+
 ## 使用示例
 
 ### 一个计算费用、费率的简单示例
@@ -169,7 +173,8 @@ CREATE TABLE `t_ruleset_info` (
 ```json
 {
     "code": "RULEST_RATE_CALC",
-    "name": "ruleset for rate calculate"
+    "name": "ruleset for rate calculate",
+    "defaultReturnValues": "PREM:0.00,RATE:0.00"
 }
 ```
 

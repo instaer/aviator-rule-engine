@@ -44,6 +44,13 @@ public class RulesetInfoEntity {
     private String remark;
 
     /**
+     * default return values collection (comma-separated key-value pairs)
+     * e.g. returnVariable1:returnValue1,returnVariable2:returnValue2
+     */
+    @Column
+    private String defaultReturnValues;
+
+    /**
      * ruleset expression
      */
     @Column

@@ -42,8 +42,8 @@ public class RuleInfoEntity {
     private String remark;
 
     /**
-     * Return value collection (comma-separated key-value pairs)
-     * e.g. returnVariable1:value1,returnVariable2:value2
+     * Return values collection (comma-separated key-value pairs)
+     * e.g. returnVariable1:returnValue1,returnVariable2:returnValue2
      */
     @Column
     private String returnValues;
