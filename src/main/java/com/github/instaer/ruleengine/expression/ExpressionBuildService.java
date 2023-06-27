@@ -65,6 +65,8 @@ public class ExpressionBuildService {
         }
 
         StringBuilder rulesetExpression = new StringBuilder("let rmap = seq.map(");
+
+        // set default return values collection for rule set
         String defaultReturnValues = rulesetInfoEntity.getDefaultReturnValues();
         if (StringUtils.isNotBlank(defaultReturnValues)) {
             String initRMapValue = Arrays.stream(defaultReturnValues.split(",")).map(v -> v.split(":"))
@@ -77,7 +79,8 @@ public class ExpressionBuildService {
             RuleInfoEntity ruleInfo = ruleInfos.get(i);
             List<ConditionInfoEntity> conditionInfos = conditionInfoRepository.findByRuleId(ruleInfo.getId());
             if (CollectionUtils.isEmpty(conditionInfos)) {
-                throw new RuleRunTimeException("no conditions found under the rule(" + ruleInfo.getId() + ").");
+                log.warn("no conditions found under the rule({}).", ruleInfo.getId());
+                continue;
             }
 
             String ruleExpression = buildRuleExpression(conditionInfos);

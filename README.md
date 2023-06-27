@@ -150,7 +150,7 @@ CREATE TABLE `t_ruleset_info` (
 ## 规则集
 规则集是规则引擎执行的对象，一个规则集下包含一个或多个规则，默认添加的规则集处于`RulesetMode.BUILDING`模式，表示当前的规则集表达式未生成，规则集处于不可用状态。当规则集下存在规则，并且每个规则下存在条件时，规则集自动切换为`RulesetMode.BUILT`模式，并且生成规则集表达式。
 
-### 规则集默认返回值集合
+### 规则集设置默认返回值集合
 规则集支持设置默认返回值。在设置规则时，可以设置当前规则匹配时的返回值，对于规则集下所有规则均不匹配的情况，可以在规则集设置默认返回值`defaultReturnValues`，数据格式和在规则下设置返回值集合相同（`e.g. returnVariable1:returnValue1,returnVariable2:returnValue2`）。
 
 ## 使用示例

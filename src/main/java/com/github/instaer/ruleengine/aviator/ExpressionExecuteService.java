@@ -23,7 +23,6 @@ public class ExpressionExecuteService {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
-            Thread.sleep(3000);
             log.info("## execute expression start");
             log.info("## execute expression =>\n {}, ", expression);
             log.info("## execute param => {}", paramMap);
