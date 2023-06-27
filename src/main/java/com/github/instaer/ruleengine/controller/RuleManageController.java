@@ -36,7 +36,7 @@ public class RuleManageController {
 
     @GetMapping("/findRulesetInfoPage")
     public ResponseVO<Page<RulesetInfoEntity>> findRulesetInfoPage(RulesetInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.findRulesetInfoPage(dto.getPage(), dto.getSize()));
+        return ResponseVO.ok(ruleManageService.findRulesetInfoPage(dto));
     }
 
     @GetMapping("/findRuleInfoPage")

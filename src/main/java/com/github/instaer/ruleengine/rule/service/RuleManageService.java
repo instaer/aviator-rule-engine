@@ -1,5 +1,6 @@
 package com.github.instaer.ruleengine.rule.service;
 
+import com.github.instaer.ruleengine.common.RulesetInfoDTO;
 import com.github.instaer.ruleengine.constants.RulesetMode;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import com.github.instaer.ruleengine.expression.ExpressionBuildService;
@@ -13,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,10 +37,14 @@ public class RuleManageService {
     @Autowired
     private ExpressionBuildService expressionBuildService;
 
-    public Page<RulesetInfoEntity> findRulesetInfoPage(Integer page, Integer size) {
+    public Page<RulesetInfoEntity> findRulesetInfoPage(RulesetInfoDTO dto) {
+        RulesetInfoEntity rulesetInfoEntity = new RulesetInfoEntity();
+        rulesetInfoEntity.setCode(dto.getRulesetCode());
+        Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
+
         // pageNumber start from 0
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
-        return rulesetInfoRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getSize(), Sort.Direction.DESC, "id");
+        return rulesetInfoRepository.findAll(example, pageable);
     }
 
     public Page<RuleInfoEntity> findRuleInfoPage(Long rulesetId, Integer page, Integer size) {
