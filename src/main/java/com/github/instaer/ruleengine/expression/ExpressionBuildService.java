@@ -11,6 +11,7 @@ import com.github.instaer.ruleengine.rule.repository.ConditionInfoRepository;
 import com.github.instaer.ruleengine.rule.repository.RuleInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -99,10 +100,16 @@ public class ExpressionBuildService {
             ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
+            // wrap non-numeric value with single quote
+            String referenceValue = conditionInfo.getReferenceValue();
+            if (!NumberUtils.isDigits(referenceValue)) {
+                referenceValue = "'" + referenceValue.replace("'", "\\'") + "'";
+            }
+
             ConditionInstance conditionInstance = ConditionInstance.builder()
                     .variableName(conditionInfo.getVariableName())
                     .relationType(relationType)
-                    .referenceValue(conditionInfo.getReferenceValue())
+                    .referenceValue(referenceValue)
                     .priority(conditionInfo.getPriority())
                     .logicType(logicType)
                     .build();
