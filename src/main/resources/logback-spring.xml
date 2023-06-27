@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <property name="project_name" value="RuleEngine"/>
+    <property name="log_path" value="/log" />
+    <property name="all_file" value="all.log" />
+    <property name="error_file" value="error.log" />
+    <property name="all_file_gz" value="all-%d{yyyy-MM-dd}.log.gz" />
+    <property name="error_file_gz" value="error-%d{yyyy-MM-dd}.log.gz" />
+    <property name="log_pattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] --- [%X{traceId}/%X{spanId}/%X{sampled}] [%thread]:[%logger{20},%method,%line]:[%msg]%n" />
+    <property name="max_history" value="7" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <file>${log_path}/${project_name}/${all_file}</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_path}/${project_name}/${all_file_gz}</fileNamePattern>
+            <maxHistory>${max_history}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+
+        <file>${log_path}/${project_name}/${error_file}</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_path}/${project_name}/${error_file_gz}</fileNamePattern>
+            <maxHistory>${max_history}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ALL" />
+        <appender-ref ref="ERROR" />
+    </root>
+
+</configuration>
