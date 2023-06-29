@@ -40,19 +40,15 @@ public class RuleManageController {
         return ResponseVO.ok(RuleLogicType.ruleLogicTypeMap);
     }
 
+    @PostMapping("/refreshRuleset")
+    public ResponseVO<String> refreshRuleset(@RequestBody Map<String, Object> requestBody) {
+        ruleManageService.refreshRuleset(((Integer) requestBody.get("rulesetId")).longValue());
+        return ResponseVO.ok();
+    }
+
     @GetMapping("/findRulesetInfoPage")
     public ResponseVO<Page<RulesetInfoEntity>> findRulesetInfoPage(RulesetInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.findRulesetInfoPage(dto));
-    }
-
-    @GetMapping("/findRuleInfoPage")
-    public ResponseVO<Page<RuleInfoEntity>> findRuleInfoPage(RuleInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.findRuleInfoPage(dto.getRulesetId(), dto.getPage(), dto.getSize()));
-    }
-
-    @GetMapping("/findConditionInfoPage")
-    public ResponseVO<Page<ConditionInfoEntity>> findConditionInfoPage(ConditionInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.findConditionInfoPage(dto.getRuleId(), dto.getPage(), dto.getSize()));
     }
 
     @PostMapping("/saveRulesetInfo")
@@ -66,6 +62,11 @@ public class RuleManageController {
         return ResponseVO.ok();
     }
 
+    @GetMapping("/findRuleInfoPage")
+    public ResponseVO<Page<RuleInfoEntity>> findRuleInfoPage(RuleInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.findRuleInfoPage(dto.getRulesetId(), dto.getPage(), dto.getSize()));
+    }
+
     @PostMapping("/saveRuleInfo")
     public ResponseVO<RuleInfoEntity> saveRuleInfo(@RequestBody RuleInfoEntity ruleInfoEntity) {
         return ResponseVO.ok(ruleManageService.saveRuleInfo(ruleInfoEntity));
@@ -77,14 +78,13 @@ public class RuleManageController {
         return ResponseVO.ok();
     }
 
+    @GetMapping("/findConditionInfoPage")
+    public ResponseVO<Page<ConditionInfoEntity>> findConditionInfoPage(ConditionInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.findConditionInfoPage(dto.getRuleId(), dto.getPage(), dto.getSize()));
+    }
+
     @PostMapping("/saveConditionInfoList")
     public ResponseVO<List<ConditionInfoEntity>> saveConditionInfoList(@RequestBody List<ConditionInfoEntity> conditionInfoEntityList) {
         return ResponseVO.ok(ruleManageService.saveConditionInfoList(conditionInfoEntityList));
-    }
-
-    @PostMapping("/refreshRuleset")
-    public ResponseVO<String> refreshRuleset(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.refreshRuleset(((Integer) requestBody.get("rulesetId")).longValue());
-        return ResponseVO.ok();
     }
 }

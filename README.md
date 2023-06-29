@@ -3,8 +3,9 @@
 
 将规则划分为规则集、规则、条件三个维度，可以满足业务规则的通用性配置，同时也可以进行扩展。
 
-[快速使用示例入口](#使用示例)  
-[快速使用说明入口](#使用说明)
+- [<u>**快速使用示例入口**</u>](#使用示例)  
+- [<u>**快速使用说明入口**</u>](#使用说明)  
+- [<u>**快速查看接口文档**</u>](./README_API.md)
 
 ## 依赖版本
 - AviatorScript 5.3.0+
@@ -102,7 +103,7 @@ CREATE TABLE `t_ruleset_info` (
 
 | 条件类型 | 描述 |
 | :-------: | :--: |
-|  REGULAR  | 正则 |
+|  REGEX  | 正则 |
 
 ## 支持的规则逻辑运算类型
 [RuleLogicType](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/java/com/github/instaer/ruleengine/constants/RuleLogicType.java)
@@ -162,14 +163,14 @@ CREATE TABLE `t_ruleset_info` (
 
 ### 规则逻辑运算
 每条规则都附带[逻辑运算类型](#支持的规则逻辑运算类型)，以两个规则的组合为例，规则逻辑运算的作用机制说明如下：
-1. 若高优先级规则的逻辑运算类型为关联类型（`AND`），则高优先级规则的逻辑运算作用于低优先级规则，低优先级规则的逻辑运算不影响规则组合，但低优先级规则设置的返回值结合即为规则组合的返回值集合（高优先级规则设置的返回值集合被覆盖）；
+1. 若高优先级规则的逻辑运算类型为关联类型（`AND`），则高优先级规则的逻辑运算作用于低优先级规则，低优先级规则的逻辑运算不影响规则组合，但低优先级规则设置的返回值集合即为规则组合的返回值集合（高优先级规则设置的返回值集合被覆盖）；
 2. 若高优先级规则的逻辑运算类型为互斥类型（`XOR），则高优先级规则和低优先级规则的逻辑运算互不影响，返回值集合也不会被任何一方覆盖；
 
 以如下表达式为例：
 
 >`(a == 1|| b == 2) && (c == 3 || d == 4)`
 
-从表面上看，这是一个规则表达式，将其拆分为4个条件（最小执行单元）后分别为`a == 1`、`b ==2`、`c ==3`、`d ==4`，同一规则下的多个条件组合时按照优先级从高到低进行组合，组合顺序是唯一的。但结合表达式来看，此处的表达式出现了两个组合顺序，即：`a == 1|| b == 2`和`c == 3 || d == 4`，因此不能作为一条规则进行组合。
+从表面上看，这是一个规则表达式，将其拆分为4个条件（最小执行单元）后分别为`a == 1`、`b ==2`、`c ==3`、`d ==4`，同一规则下的多个条件组合时按照优先级从高到低进行组合，组合顺序是唯一的。但结合表达式来看，此处的表达式出现了两个组合顺序，即：`(a == 1|| b == 2)`和`(c == 3 || d == 4)`，因此不能作为一条规则进行组合。
 
 我们将其作为两个规则（R1，R2）进行组合，这两条规则下的条件列表分别为`a == 1`、`b ==2`和`c ==3`、`d ==4`，对应的两个规则表达式为R1:`a == 1|| b == 2，R2:c == 3 || d == 4`。
 
@@ -412,51 +413,7 @@ System.out.println("费用：" + resultMap.get("PREM"));// 198.2
 System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 ```
 
-或者通过外部接口直接调用`/executeRuleset`。
-
-## 接口说明
-项目中主要有两大类接口，包括外部请求接口和内部管理接口。
-
-### 外部请求接口
-* 执行规则集
-> <http://localhost:8000/api/executeRuleset>
-
-### 内部管理接口
-* 查询所有条件逻辑运算类型
-> <http://localhost:8000/admin/conditionLogicTypeMap>
-
-* 查询所有条件关系运算类型
-> <http://localhost:8000/admin/conditionRelationTypeMap>
-
-* 查询所有规则逻辑运算类型
-> <http://localhost:8000/admin/ruleLogicTypeMap>
-
-* 查询规则集（分页）
-> <http://localhost:8000/admin/findRulesetInfoPage>
-
-* 查询规则集下的所有规则（分页）
-> <http://localhost:8000/admin/findRuleInfoPage>
-
-* 查询规则下的所有条件（分页）
-> <http://localhost:8000/admin/findConditionInfoPage>
-
-* 保存规则集
-> <http://localhost:8000/admin/saveRulesetInfo>
-
-* 删除规则集
-> <http://localhost:8000/admin/deleteRulesetInfo>
-
-* 保存规则
-> <http://localhost:8000/admin/saveRuleInfo>
-
-* 删除规则
-> <http://localhost:8000/admin/deleteRuleInfo>
-
-* 保存规则下的所有条件
-> <http://localhost:8000/admin/saveConditionInfoList>
-
-* 刷新规则集
-> <http://localhost:8000/admin/refreshRuleset>
+或者通过外部接口调用`/api/executeRuleset`。
 
 ## 使用说明
 建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。
