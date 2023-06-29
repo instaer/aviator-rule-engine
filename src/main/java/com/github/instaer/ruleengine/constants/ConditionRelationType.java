@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Condition relational operation type
+ * Condition relation operator type
  */
 @Getter
 @AllArgsConstructor

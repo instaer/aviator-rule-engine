@@ -48,13 +48,13 @@ public class ConditionInfoEntity {
     private String referenceValue;
 
     /**
-     * condition relational operation type {@code ConditionRelationType}
+     * condition relation operator type {@code ConditionRelationType}
      */
     @Column
     private String relationType;
 
     /**
-     * condition logical operation type {@code ConditionLogicType}
+     * condition logic operator type {@code ConditionLogicType}
      */
     @Column
     private String logicType;

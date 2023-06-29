@@ -17,7 +17,7 @@ public class ConditionInstance {
     private String variableName;
 
     /**
-     * condition relational operation type (using between variables and reference values)
+     * condition relation operator type
      */
     private ConditionRelationType relationType;
 
@@ -29,7 +29,7 @@ public class ConditionInstance {
     private int priority;
 
     /**
-     * Condition logical operation type (using between conditions with similar priorities)
+     * Condition logic operator type
      */
     private ConditionLogicType logicType;
 

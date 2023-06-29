@@ -41,6 +41,8 @@ CREATE TABLE `t_rule_info` (
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '规则名称',
   `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '规则备注',
   `return_values` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '返回值集合',
+  `logic_type` varchar(32) NOT NULL COMMENT '规则逻辑运算类型',
+  `priority` smallint unsigned NOT NULL COMMENT '规则优先级（值越大优先级越高）',
   PRIMARY KEY (`id`),
   KEY `ix_ruleset_id` (`ruleset_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT = '规则';
@@ -102,6 +104,14 @@ CREATE TABLE `t_ruleset_info` (
 | :-------: | :--: |
 |  REGULAR  | 正则 |
 
+## 支持的规则逻辑运算类型
+[RuleLogicType](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/java/com/github/instaer/ruleengine/constants/RuleLogicType.java)
+
+| 逻辑类型 | 值 |               描述               |
+| :---: | :---: | :------------------------------: |
+|  AND  |  &&   | 关联类型：在优先级相邻的两个规则中，优先级较高的规则和优先级较低的规则同时匹配时，才返回对应的返回值。否则返回null或规则集设置的默认返回值（如果已设置）。 |
+|  XOR   |   |   互斥类型：在优先级相邻的两个规则中，优先级较高的规则匹配时，直接返回对应的返回值，不再验证后面的规则；否则，验证优先级较低的规则是否满足，如果满足则返回对应的返回值。不满足则返回null或规则集设置的默认返回值（如果已设置）。   |
+
 ## 条件
 条件是最小的执行单元，例如：`x >= 99`。
 
@@ -127,7 +137,7 @@ CREATE TABLE `t_ruleset_info` (
 同时注意，在每两个条件的组合两侧添加了括号，保证了括号内条件的优先级。
 
 ### 条件逻辑运算
-每个条件都附带逻辑运算类型，当两个条件之间进行组合时，高优先级条件的逻辑运算作用于低优先级条件，而低优先级条件作用于条件组合整体。
+每个条件都附带[逻辑运算类型](#支持的条件逻辑运算类型)，当两个条件之间进行组合时，高优先级条件的逻辑运算作用于低优先级条件，而低优先级条件的逻辑运算作用于条件组合整体。
 
 以如下表达式为例：
 
@@ -140,12 +150,41 @@ CREATE TABLE `t_ruleset_info` (
 * 假设条件`v != 4`逻辑运算类型为`||`，则整个表达式等价于`(((x == 1 || y > 2) && z <= 3) && v != 4) || false`；假设条件`v != 4`逻辑运算类型为`&&`，则整个表达式等价于`(((x == 1 || y > 2) && z <= 3) && v != 4) && true`。
 
 ### 条件关系运算
-每个条件都附带条件关系类型，用于和参考值进行比较。
+每个条件都附带[条件关系类型](#支持的条件关系运算类型)，用于和参考值进行比较。
 
 例如条件`x >= 99`，`x`是条件的变量名，作为参数传入的唯一标识符，`>=`是条件的关系运算符（对应的关系运算类型为，`ConditionRelationType.EQUAL`），`99`是条件的参考值，用于和以`x`为变量名的参数值进行对应的关系运算。
 
 ## 规则
-条件之上就是规则，规则相当于一个条件组合，一个规则下附带一个条件列表，在生成规则表达式时，条件列表中的所有条件将自动进行组合。
+多个条件经过组合之后就是一个规则，一个规则下附带一个条件列表，在生成规则表达式时，条件列表中的所有条件将按优先级从高到低进行组合。
+
+### 规则优先级
+规则优先级的含义和[条件优先级](#条件优先级)相似。规则优先级决定了多个规则之间的组合顺序和结构。
+
+### 规则逻辑运算
+每条规则都附带[逻辑运算类型](#支持的规则逻辑运算类型)，以两个规则的组合为例，规则逻辑运算的作用机制说明如下：
+1. 若高优先级规则的逻辑运算类型为关联类型（`AND`），则高优先级规则的逻辑运算作用于低优先级规则，低优先级规则的逻辑运算不影响规则组合，但低优先级规则设置的返回值结合即为规则组合的返回值集合（高优先级规则设置的返回值集合被覆盖）；
+2. 若高优先级规则的逻辑运算类型为互斥类型（`XOR），则高优先级规则和低优先级规则的逻辑运算互不影响，返回值集合也不会被任何一方覆盖；
+
+以如下表达式为例：
+
+>`(a == 1|| b == 2) && (c == 3 || d == 4)`
+
+从表面上看，这是一个规则表达式，将其拆分为4个条件（最小执行单元）后分别为`a == 1`、`b ==2`、`c ==3`、`d ==4`，同一规则下的多个条件组合时按照优先级从高到低进行组合，组合顺序是唯一的。但结合表达式来看，此处的表达式出现了两个组合顺序，即：`a == 1|| b == 2`和`c == 3 || d == 4`，因此不能作为一条规则进行组合。
+
+我们将其作为两个规则（R1，R2）进行组合，这两条规则下的条件列表分别为`a == 1`、`b ==2`和`c ==3`、`d ==4`，对应的两个规则表达式为R1:`a == 1|| b == 2，R2:c == 3 || d == 4`。
+
+其中R1优先级设置为100，逻辑运算类型设置为关联类型（`AND`），返回值集合和R2相同即可（R1在两个规则的组合之间优先级最高，返回值集合被R2覆盖）；
+
+R2优先级设置为98，逻辑运算类型为AND和XOR均可（R2在两个规则的组合之间优先级最低，逻辑运算不作用于其他任何规则），返回值集合设置为：`myvalue:true`。
+
+将R1、R2添加到一个规则集下，最终生成表达式为`(a == 1|| b == 2) && (c == 3 || d == 4)`，对应生成的aviator执行脚本为：
+```
+let rmap = seq.map('myvalue', false);
+if((a == 1 || b == 2) && (c == 3 || d == 4)){
+seq.put(rmap, 'myvalue', true);
+}
+return rmap;
+```
 
 ## 规则集
 规则集是规则引擎执行的对象，一个规则集下包含一个或多个规则，默认添加的规则集处于`RulesetMode.BUILDING`模式，表示当前的规则集表达式未生成，规则集处于不可用状态。当规则集下存在规则，并且每个规则下存在条件时，规则集自动切换为`RulesetMode.BUILT`模式，并且生成规则集表达式。
@@ -194,19 +233,25 @@ CREATE TABLE `t_ruleset_info` (
 {
     "rulesetId": 2,
     "name": "rule for age(0-3)",
-    "returnValues": "PREM:67.9,RATE:0.0679"
+    "returnValues": "PREM:67.9,RATE:0.0679",
+    "logicType": "XOR",
+    "priority": 100
 }
 
 {
     "rulesetId": 2,
     "name": "rule for age(4-11)",
-    "returnValues": "PREM:198.2,RATE:0.1982"
+    "returnValues": "PREM:198.2,RATE:0.1982", 
+    "logicType": "XOR", 
+    "priority": 99
 }
 
 {
     "rulesetId": 2,
     "name": "rule for age(12)",
-    "returnValues": "PREM:18,RATE:0.018"
+    "returnValues": "PREM:18,RATE:0.018",
+    "logicType": "XOR",
+    "priority": 98
 }
 ```
 
@@ -377,11 +422,14 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 > <http://localhost:8000/api/executeRuleset>
 
 ### 内部管理接口
-* 查询所有逻辑运算类型
-> <http://localhost:8000/admin/logicTypeMap>
+* 查询所有条件逻辑运算类型
+> <http://localhost:8000/admin/conditionLogicTypeMap>
 
-* 查询所有关系运算类型
-> <http://localhost:8000/admin/relationTypeMap>
+* 查询所有条件关系运算类型
+> <http://localhost:8000/admin/conditionRelationTypeMap>
+
+* 查询所有规则逻辑运算类型
+> <http://localhost:8000/admin/ruleLogicTypeMap>
 
 * 查询规则集（分页）
 > <http://localhost:8000/admin/findRulesetInfoPage>

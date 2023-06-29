@@ -52,7 +52,7 @@ public class RuleManageService {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "priority", "id");
         return ruleInfoRepository.findByRulesetId(rulesetId, pageable);
     }
 

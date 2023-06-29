@@ -47,4 +47,16 @@ public class RuleInfoEntity {
      */
     @Column
     private String returnValues;
+
+    /**
+     * rule logic operator type {@code RuleLogicType}
+     */
+    @Column
+    private String logicType;
+
+    /**
+     * rule priority (the larger the value, the higher the priority)
+     */
+    @Column
+    private Integer priority;
 }

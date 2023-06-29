@@ -24,7 +24,7 @@ public class ExpressionExecuteService {
         stopWatch.start();
         try {
             log.info("## execute expression start");
-            log.info("## execute expression =>\n {}, ", expression);
+            log.info("## execute expression =>\n{}, ", expression);
             log.info("## execute param => {}", paramMap);
 
             Expression compiledExp = evalEvaluatorInstance.compile(expression, true);

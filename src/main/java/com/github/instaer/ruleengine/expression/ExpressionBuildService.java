@@ -4,6 +4,7 @@ import com.github.instaer.ruleengine.condition.Condition;
 import com.github.instaer.ruleengine.condition.ConditionInstance;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
 import com.github.instaer.ruleengine.constants.ConditionRelationType;
+import com.github.instaer.ruleengine.constants.RuleLogicType;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import com.github.instaer.ruleengine.rule.entity.ConditionInfoEntity;
 import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
@@ -75,22 +76,71 @@ public class ExpressionBuildService {
         }
         rulesetExpression.append(");\n");
 
-        for (int i = 0; i < ruleInfos.size(); i++) {
-            RuleInfoEntity ruleInfo = ruleInfos.get(i);
+        // sort by priority in desc order
+        ruleInfos.sort(Comparator.comparingInt(RuleInfoEntity::getPriority).reversed());
+
+        Iterator<RuleInfoEntity> ruleInfoIterator = ruleInfos.iterator();
+        RuleLogicType lastRuleLogicType = null;
+        while (ruleInfoIterator.hasNext()) {
+            RuleInfoEntity ruleInfo = ruleInfoIterator.next();
             List<ConditionInfoEntity> conditionInfos = conditionInfoRepository.findByRuleId(ruleInfo.getId());
             if (CollectionUtils.isEmpty(conditionInfos)) {
                 log.warn("no conditions found under the rule({}).", ruleInfo.getId());
                 continue;
             }
 
+            RuleLogicType currentRuleLogicType = RuleLogicType.getRuleLogicType(ruleInfo.getLogicType());
             String ruleExpression = buildRuleExpression(conditionInfos);
-            rulesetExpression.append(i == 0 ? "if(" : "elsif(").append(ruleExpression).append("){\n");
-            Arrays.stream(ruleInfo.getReturnValues().split(",")).map(v -> v.split(":"))
-                    .forEach(a -> rulesetExpression.append("seq.put(rmap, '")
-                            .append(a[0]).append("', ")
-                            .append(stringValueEscape(a[1]))
-                            .append(");\n"));
-            rulesetExpression.append("}\n");
+
+            // first rule
+            if (null == lastRuleLogicType) {
+                rulesetExpression.append("if(");
+                if (ruleInfoIterator.hasNext() && RuleLogicType.AND.equals(currentRuleLogicType)) {
+                    rulesetExpression.append("(")
+                            .append(ruleExpression)
+                            .append(") ")
+                            .append(currentRuleLogicType.getValue())
+                            .append(" ");
+                }
+                else if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
+                    rulesetExpression.append(ruleExpression).append("){\n");
+                }
+            }
+            else {
+                if (RuleLogicType.AND.equals(lastRuleLogicType)) {
+                    rulesetExpression.append("(").append(ruleExpression).append(")");
+                    if (ruleInfoIterator.hasNext() && RuleLogicType.AND.equals(currentRuleLogicType)) {
+                        rulesetExpression.append(" ").append(currentRuleLogicType.getValue()).append(" ");
+                    }
+                    else if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
+                        rulesetExpression.append("){\n");
+                    }
+                }
+                else if (RuleLogicType.XOR.equals(lastRuleLogicType)) {
+                    rulesetExpression.append("elsif(");
+                    if (ruleInfoIterator.hasNext() && RuleLogicType.AND.equals(currentRuleLogicType)) {
+                        rulesetExpression.append("(")
+                                .append(ruleExpression)
+                                .append(") ")
+                                .append(currentRuleLogicType.getValue())
+                                .append(" ");
+                    }
+                    else if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
+                        rulesetExpression.append(ruleExpression).append("){\n");
+                    }
+                }
+            }
+
+            if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
+                Arrays.stream(ruleInfo.getReturnValues().split(",")).map(v -> v.split(":"))
+                        .forEach(a -> rulesetExpression.append("seq.put(rmap, '")
+                                .append(a[0]).append("', ")
+                                .append(stringValueEscape(a[1]))
+                                .append(");\n"));
+                rulesetExpression.append("}\n");
+            }
+
+            lastRuleLogicType = currentRuleLogicType;
         }
 
         rulesetExpression.append("return rmap;");
@@ -144,7 +194,7 @@ public class ExpressionBuildService {
                     finalExpression.append(")");
                 }
 
-                // Ignore the conditional logical operator with the lowest priority
+                // Ignore the conditional logic operator with the lowest priority
                 finalExpression.append(" ").append(conditionInstance.getLogicType().getValue()).append(" ");
             }
         }
@@ -160,10 +210,11 @@ public class ExpressionBuildService {
      * @return
      */
     private static String stringValueEscape(String value) {
-        if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {
+        if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value) ||
+                NumberUtils.isCreatable(value)) {
             return value;
         }
 
-        return NumberUtils.isDigits(value) ? value : "'" + value.replace("'", "\\'") + "'";
+        return "'" + value.replace("'", "\\'") + "'";
     }
 }

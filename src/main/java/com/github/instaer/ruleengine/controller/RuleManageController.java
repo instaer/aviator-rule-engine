@@ -6,6 +6,7 @@ import com.github.instaer.ruleengine.common.RuleInfoDTO;
 import com.github.instaer.ruleengine.common.RulesetInfoDTO;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
 import com.github.instaer.ruleengine.constants.ConditionRelationType;
+import com.github.instaer.ruleengine.constants.RuleLogicType;
 import com.github.instaer.ruleengine.rule.entity.ConditionInfoEntity;
 import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
 import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
@@ -24,14 +25,19 @@ public class RuleManageController {
     @Autowired
     private RuleManageService ruleManageService;
 
-    @GetMapping("/logicTypeMap")
-    public ResponseVO<Map<String, String>> logicTypeMap() {
+    @GetMapping("/conditionLogicTypeMap")
+    public ResponseVO<Map<String, String>> conditionLogicTypeMap() {
         return ResponseVO.ok(ConditionLogicType.conditionLogicTypeMap);
     }
 
-    @GetMapping("/relationTypeMap")
-    public ResponseVO<Map<String, String>> relationTypeMap() {
+    @GetMapping("/conditionRelationTypeMap")
+    public ResponseVO<Map<String, String>> conditionRelationTypeMap() {
         return ResponseVO.ok(ConditionRelationType.conditionRelationTypeMap);
+    }
+
+    @GetMapping("/ruleLogicTypeMap")
+    public ResponseVO<Map<String, String>> ruleLogicTypeMap() {
+        return ResponseVO.ok(RuleLogicType.ruleLogicTypeMap);
     }
 
     @GetMapping("/findRulesetInfoPage")
