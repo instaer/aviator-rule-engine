@@ -5,11 +5,11 @@ import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegularCondition implements Condition {
+public class RegexCondition implements Condition {
 
     @Override
     public ConditionRelationType[] relationTypes() {
-        return new ConditionRelationType[]{ConditionRelationType.REGULAR};
+        return new ConditionRelationType[]{ConditionRelationType.REGEX};
     }
 
     @Override

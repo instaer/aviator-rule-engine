@@ -16,11 +16,11 @@ public enum ConditionRelationType {
 
     EQUAL("EQUAL", "%s == %s"),
 
-    NOT_EQUAL("NOT_EQUAL", "%s != %s"),
+    NOT_EQUAL("NOT EQUAL", "%s != %s"),
 
-    LESS_EQUAL("LESS_EQUAL", "%s <= %s"),
+    LESS_EQUAL("LESS EQUAL", "%s <= %s"),
 
-    GREATER_EQUAL("GREATER_EQUAL", "%s >= %s"),
+    GREATER_EQUAL("GREATER EQUAL", "%s >= %s"),
 
     LESS("LESS", "%s < %s"),
 
@@ -29,27 +29,27 @@ public enum ConditionRelationType {
     /**
      * a string type element is included in a list
      */
-    INCLUDE_IN_LIST("INCLUDE_IN_LIST", "include(seq.set(%s), str(%s))"),
+    INCLUDE_IN_LIST("INCLUDE IN LIST", "include(seq.set(%s), str(%s))"),
 
     /**
      * a string type element is not included in a list
      */
-    NOT_INCLUDE_IN_LIST("NOT_INCLUDE_IN_LIST", "!include(seq.set(%s), str(%s))"),
+    NOT_INCLUDE_IN_LIST("NOT INCLUDE IN LIST", "!include(seq.set(%s), str(%s))"),
 
     /**
      * some characters in a string are contained in a list
      */
-    SOME_CONTAINS_IN_LIST("SOME_CONTAINS_IN_LIST", "nil != seq.some(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
+    SOME_CONTAINS_IN_LIST("SOME CONTAINS IN LIST", "nil != seq.some(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
 
     /**
      * none characters of a string are contained in a list
      */
-    NONE_CONTAINS_IN_LIST("NONE_CONTAINS_IN_LIST", "seq.not_any(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
+    NONE_CONTAINS_IN_LIST("NONE CONTAINS IN LIST", "seq.not_any(seq.set(%s), lambda(x) -> string.indexOf(str(%s), x) > -1 end)"),
 
     /**
      * match regular expression
      */
-    REGULAR("REGULAR", "str(%s) =~ %s");
+    REGEX("REGEX", "str(%s) =~ %s");
 
     private final String desc;
     private final String format;
