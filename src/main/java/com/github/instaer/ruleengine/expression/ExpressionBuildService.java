@@ -166,10 +166,16 @@ public class ExpressionBuildService {
             ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
+            // When the condition relation type is regex, not convert it to a string by adding single quotes.
+            String referenceValue = conditionInfo.getReferenceValue();
+            if (!ConditionRelationType.REGEX.equals(relationType)) {
+                referenceValue = stringValueEscape(conditionInfo.getReferenceValue());
+            }
+
             ConditionInstance conditionInstance = ConditionInstance.builder()
                     .variableName(conditionInfo.getVariableName())
                     .relationType(relationType)
-                    .referenceValue(stringValueEscape(conditionInfo.getReferenceValue()))
+                    .referenceValue(referenceValue)
                     .priority(conditionInfo.getPriority())
                     .logicType(logicType)
                     .build();
