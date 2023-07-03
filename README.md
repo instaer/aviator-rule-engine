@@ -176,13 +176,13 @@ CREATE TABLE `t_ruleset_info` (
 
 其中R1优先级设置为100，逻辑运算类型设置为关联类型（`AND`），返回值集合和R2相同即可（R1在两个规则的组合之间优先级最高，返回值集合被R2覆盖）；
 
-R2优先级设置为98，逻辑运算类型为AND和XOR均可（R2在两个规则的组合之间优先级最低，逻辑运算不作用于其他任何规则），返回值集合设置为：`myvalue:true`。
+R2优先级设置为98，逻辑运算类型为AND和XOR均可（R2在两个规则的组合之间优先级最低，逻辑运算不作用于其他任何规则），返回值集合设置为：`{'myvariable':true}`。
 
 将R1、R2添加到一个规则集下，最终生成表达式为`(a == 1|| b == 2) && (c == 3 || d == 4)`，对应生成的aviator执行脚本为：
 ```
-let rmap = seq.map('myvalue', false);
+let rmap = seq.map('myvariable', false);
 if((a == 1 || b == 2) && (c == 3 || d == 4)){
-seq.put(rmap, 'myvalue', true);
+seq.put(rmap, 'myvariable', true);
 }
 return rmap;
 ```
@@ -191,7 +191,7 @@ return rmap;
 规则集是规则引擎执行的对象，一个规则集下包含一个或多个规则，默认添加的规则集处于`RulesetMode.BUILDING`模式，表示当前的规则集表达式未生成，规则集处于不可用状态。当规则集下存在规则，并且每个规则下存在条件时，规则集自动切换为`RulesetMode.BUILT`模式，并且生成规则集表达式。
 
 ### 规则集设置默认返回值集合
-规则集支持设置默认返回值。在设置规则时，可以设置当前规则匹配时的返回值，对于规则集下所有规则均不匹配的情况，可以在规则集设置默认返回值`defaultReturnValues`，数据格式和在规则下设置返回值集合相同（`e.g. returnVariable1:returnValue1,returnVariable2:returnValue2`）。
+规则集支持设置默认返回值。在设置规则时，可以设置当前规则匹配时的返回值，对于规则集下所有规则均不匹配的情况，可以在规则集设置默认返回值`defaultReturnValues`，数据格式和在规则下设置返回值集合相同（`e.g. {'returnVariable1':returnValue1,'returnVariable2':returnValue2}`）。
 
 ## 使用示例
 
@@ -214,13 +214,13 @@ return rmap;
 {
     "code": "RULEST_RATE_CALC",
     "name": "ruleset for rate calculate",
-    "defaultReturnValues": "PREM:0.00,RATE:0.00"
+    "defaultReturnValues": "{PREM:0.00,RATE:0.00}"
 }
 ```
 
 * 在当前规则集下添加规则
 
-定义返回值集合，用于接收规则引擎执行的返回值 ，例如`PREM:67.9,RATE:0.0679`， 含义就是如果满足规则对应的条件，就返回一个map集合：
+定义返回值集合，用于接收规则引擎执行的返回值 ，例如`{PREM:67.9,RATE:0.0679}`， 含义就是如果满足规则对应的条件，就返回一个map集合：
 ```json
 {
     "PREM": 67.9,
@@ -234,7 +234,7 @@ return rmap;
 {
     "rulesetId": 2,
     "name": "rule for age(0-3)",
-    "returnValues": "PREM:67.9,RATE:0.0679",
+    "returnValues": "{PREM:67.9,RATE:0.0679}",
     "logicType": "XOR",
     "priority": 100
 }
@@ -242,7 +242,7 @@ return rmap;
 {
     "rulesetId": 2,
     "name": "rule for age(4-11)",
-    "returnValues": "PREM:198.2,RATE:0.1982", 
+    "returnValues": "{PREM:198.2,RATE:0.1982}", 
     "logicType": "XOR", 
     "priority": 99
 }
@@ -250,7 +250,7 @@ return rmap;
 {
     "rulesetId": 2,
     "name": "rule for age(12)",
-    "returnValues": "PREM:18,RATE:0.018",
+    "returnValues": "{PREM:18,RATE:0.018}",
     "logicType": "XOR",
     "priority": 98
 }

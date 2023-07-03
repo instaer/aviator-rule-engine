@@ -12,7 +12,6 @@ import com.github.instaer.ruleengine.rule.repository.RuleInfoRepository;
 import com.github.instaer.ruleengine.rule.repository.RulesetInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
@@ -45,24 +44,13 @@ public class RuleManageService {
     public void refreshRuleset(Long rulesetId) {
         RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
                 .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId):" + rulesetId));
-
-        try {
-            String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
-            if (StringUtils.isNotEmpty(rulesetExpression)) {
-                rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
-                rulesetInfoEntity.setExpression(rulesetExpression);
-                rulesetInfoRepository.save(rulesetInfoEntity);
-                log.info("ruleset({}) refresh completed", rulesetId);
-                return;
-            }
-        } catch (Exception e) {
-            log.warn("ruleset({}) cannot be refreshed at this time. ({})", rulesetId, ExceptionUtils.getRootCauseMessage(e));
+        String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
+        if (StringUtils.isNotEmpty(rulesetExpression)) {
+            rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
+            rulesetInfoEntity.setExpression(rulesetExpression);
+            rulesetInfoRepository.save(rulesetInfoEntity);
+            log.info("ruleset({}) refresh completed", rulesetId);
         }
-
-        // reset the ruleset to its initial state
-        rulesetInfoEntity.setMode(RulesetMode.BUILDING.getCode());
-        rulesetInfoEntity.setExpression(null);
-        rulesetInfoRepository.save(rulesetInfoEntity);
     }
 
     public Page<RulesetInfoEntity> findRulesetInfoPage(RulesetInfoDTO dto) {

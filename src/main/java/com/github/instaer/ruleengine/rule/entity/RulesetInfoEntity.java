@@ -44,8 +44,8 @@ public class RulesetInfoEntity {
     private String remark;
 
     /**
-     * default return values collection (comma-separated key-value pairs)
-     * e.g. returnVariable1:returnValue1,returnVariable2:returnValue2
+     * default return values collection (json object string)
+     * e.g. {"variable1":value1,"variable2":value2}
      */
     @Column
     private String defaultReturnValues;

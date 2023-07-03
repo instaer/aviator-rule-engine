@@ -181,7 +181,7 @@
                 "code": "RULESET_EXAMPLE",
                 "name": "ruleset example",
                 "remark": null,
-                "defaultReturnValues": "myvalue:校验通过",
+                "defaultReturnValues": "{'myvalue':'校验通过'}",
                 "expression": null,
                 "mode": 0
             }
@@ -228,7 +228,7 @@
 {
   "code":"RULESET_EXAMPLE",
   "name":"ruleset example",
-  "defaultReturnValues":"myvalue:校验不通过"
+  "defaultReturnValues":"{'myvalue':'校验不通过'}"
 }
 ```
 
@@ -245,7 +245,7 @@
         "code": "RULESET_EXAMPLE",
         "name": "ruleset example",
         "remark": null,
-        "defaultReturnValues": "myvalue:校验不通过",
+        "defaultReturnValues": "{'myvalue':'校验不通过'}",
         "expression": null,
         "mode": 0
     }
@@ -306,7 +306,7 @@
                 "rulesetId": 5,
                 "name": "Rule Example",
                 "remark": null,
-                "returnValues": "myvalue:校验通过",
+                "returnValues": "{'myvalue':'校验通过'}",
                 "logicType": "AND",
                 "priority": 99
             }
@@ -353,7 +353,7 @@
 {
   "rulesetId":5,
   "name":"Rule Example",
-  "returnValues":"myvalue:校验通过",
+  "returnValues":"{'myvalue':'校验通过'}",
   "logicType":"AND",
   "priority":"99"
 }
@@ -372,7 +372,7 @@
         "rulesetId": 5,
         "name": "Rule Example",
         "remark": null,
-        "returnValues": "myvalue:校验通过",
+        "returnValues": "{'myvalue':'校验通过'}",
         "logicType": "AND",
         "priority": 99
     }

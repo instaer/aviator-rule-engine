@@ -1,5 +1,7 @@
 package com.github.instaer.ruleengine.expression;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.instaer.ruleengine.condition.Condition;
 import com.github.instaer.ruleengine.condition.ConditionInstance;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class ExpressionBuildService {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private List<Condition> conditionList;
@@ -70,9 +75,17 @@ public class ExpressionBuildService {
         // set default return values collection for rule set
         String defaultReturnValues = rulesetInfoEntity.getDefaultReturnValues();
         if (StringUtils.isNotBlank(defaultReturnValues)) {
-            String initRMapValue = Arrays.stream(defaultReturnValues.split(",")).map(v -> v.split(":"))
-                    .map(a -> "'" + a[0] + "', " + stringValueEscape(a[1])).collect(Collectors.joining(", "));
-            rulesetExpression.append(initRMapValue);
+            try {
+                // add key-value pair to rMap
+                Map<String, String> defaultReturnValueMap = objectMapper.readValue(defaultReturnValues, new TypeReference<Map<String, String>>() {
+                });
+                String initRMapValue = defaultReturnValueMap.entrySet().stream()
+                        .map(e -> "'" + e.getKey() + "', " + stringValueEscape(e.getValue()))
+                        .collect(Collectors.joining(", "));
+                rulesetExpression.append(initRMapValue);
+            } catch (Exception e) {
+                throw new RuleRunTimeException("The default return values of the rule set(" + rulesetInfoEntity.getId() + ") is not in valid json object string format:" + defaultReturnValues, e);
+            }
         }
         rulesetExpression.append(");\n");
 
@@ -132,11 +145,17 @@ public class ExpressionBuildService {
             }
 
             if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
-                Arrays.stream(ruleInfo.getReturnValues().split(",")).map(v -> v.split(":"))
-                        .forEach(a -> rulesetExpression.append("seq.put(rmap, '")
-                                .append(a[0]).append("', ")
-                                .append(stringValueEscape(a[1]))
-                                .append(");\n"));
+                try {
+                    Map<String, String> returnValueMap = objectMapper.readValue(ruleInfo.getReturnValues(), new TypeReference<Map<String, String>>() {
+                    });
+                    returnValueMap.forEach((k, v) -> rulesetExpression.append("seq.put(rmap, '")
+                            .append(k).append("', ")
+                            .append(stringValueEscape(v))
+                            .append(");\n"));
+                } catch (Exception e) {
+                    throw new RuleRunTimeException("The return values of the rule(" + ruleInfo.getId() + ") is not in valid json object string format:" + ruleInfo.getReturnValues(), e);
+
+                }
                 rulesetExpression.append("}\n");
             }
 
@@ -215,7 +234,7 @@ public class ExpressionBuildService {
      * @param value
      * @return
      */
-    private static String stringValueEscape(String value) {
+    private String stringValueEscape(String value) {
         if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value) ||
                 NumberUtils.isCreatable(value)) {
             return value;
