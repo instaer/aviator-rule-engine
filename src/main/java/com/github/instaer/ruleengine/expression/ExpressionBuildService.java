@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -75,17 +76,19 @@ public class ExpressionBuildService {
         // set default return values collection for rule set
         String defaultReturnValues = rulesetInfoEntity.getDefaultReturnValues();
         if (StringUtils.isNotBlank(defaultReturnValues)) {
+            Map<String, Object> defaultReturnValueMap;
             try {
-                // add key-value pair to rMap
-                Map<String, String> defaultReturnValueMap = objectMapper.readValue(defaultReturnValues, new TypeReference<Map<String, String>>() {
+                defaultReturnValueMap = objectMapper.readValue(defaultReturnValues, new TypeReference<Map<String, Object>>() {
                 });
-                String initRMapValue = defaultReturnValueMap.entrySet().stream()
-                        .map(e -> "'" + e.getKey() + "', " + stringValueEscape(e.getValue()))
-                        .collect(Collectors.joining(", "));
-                rulesetExpression.append(initRMapValue);
             } catch (Exception e) {
                 throw new RuleRunTimeException("The default return values of the rule set(" + rulesetInfoEntity.getId() + ") is not in valid json object string format:" + defaultReturnValues, e);
             }
+
+            // add key-value pair to rMap
+            String initRMapValue = defaultReturnValueMap.entrySet().stream()
+                    .map(this::buildReturnMapValue)
+                    .collect(Collectors.joining(", "));
+            rulesetExpression.append(initRMapValue);
         }
         rulesetExpression.append(");\n");
 
@@ -146,11 +149,10 @@ public class ExpressionBuildService {
 
             if (!ruleInfoIterator.hasNext() || RuleLogicType.XOR.equals(currentRuleLogicType)) {
                 try {
-                    Map<String, String> returnValueMap = objectMapper.readValue(ruleInfo.getReturnValues(), new TypeReference<Map<String, String>>() {
+                    Map<String, Object> returnValueMap = objectMapper.readValue(ruleInfo.getReturnValues(), new TypeReference<Map<String, Object>>() {
                     });
-                    returnValueMap.forEach((k, v) -> rulesetExpression.append("seq.put(rmap, '")
-                            .append(k).append("', ")
-                            .append(stringValueEscape(v))
+                    returnValueMap.entrySet().forEach(e -> rulesetExpression.append("seq.put(rmap, ")
+                            .append(buildReturnMapValue(e))
                             .append(");\n"));
                 } catch (Exception e) {
                     throw new RuleRunTimeException("The return values of the rule(" + ruleInfo.getId() + ") is not in valid json object string format:" + ruleInfo.getReturnValues(), e);
@@ -188,7 +190,11 @@ public class ExpressionBuildService {
             // When the condition relation type is regex, not convert it to a string by adding single quotes.
             String referenceValue = conditionInfo.getReferenceValue();
             if (!ConditionRelationType.REGEX.equals(relationType)) {
-                referenceValue = stringValueEscape(conditionInfo.getReferenceValue());
+                try {
+                    referenceValue = stringValueEscape(referenceValue);
+                } catch (Exception e) {
+                    throw new RuleRunTimeException("Value cannot be converted to string format:" + referenceValue, e);
+                }
             }
 
             ConditionInstance conditionInstance = ConditionInstance.builder()
@@ -228,18 +234,37 @@ public class ExpressionBuildService {
         return finalExpression.toString();
     }
 
+    private String buildReturnMapValue(Map.Entry<String, Object> entry) {
+        try {
+            return "'" + entry.getKey() + "', " + stringValueEscape(entry.getValue());
+        } catch (Exception e) {
+            throw new RuleRunTimeException("Value cannot be converted to string format:" + entry.getValue(), e);
+        }
+    }
+
     /**
      * wrap non-boolean and non-numeric string value with single quote
      *
      * @param value
      * @return
+     * @throws Exception
      */
-    private String stringValueEscape(String value) {
-        if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value) ||
-                NumberUtils.isCreatable(value)) {
-            return value;
+    private String stringValueEscape(Object value) throws Exception {
+        Assert.notNull(value, "Value cannot be null");
+
+        String stringValue;
+        if (value instanceof String) {
+            stringValue = value.toString();
+        }
+        else {
+            stringValue = objectMapper.writeValueAsString(value);
         }
 
-        return "'" + value.replace("'", "\\'") + "'";
+        if (Boolean.TRUE.toString().equals(stringValue) || Boolean.FALSE.toString().equals(stringValue) ||
+                NumberUtils.isCreatable(stringValue)) {
+            return stringValue;
+        }
+
+        return "'" + stringValue.replace("'", "\\'") + "'";
     }
 }
