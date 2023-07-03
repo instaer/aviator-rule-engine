@@ -23,9 +23,12 @@ public class SequenceCondition implements Condition {
     @Override
     public String build(ConditionInstance conditionInstance) {
         try {
-            String[] elements = conditionInstance.getReferenceValue().split(",");
+            String[] elements = conditionInstance.getReferenceValue().split("(?<!\\\\),");
             for (int i = 0; i < elements.length; i++) {
-                elements[i] = "'" + elements[i] + "'";
+                elements[i] = elements[i].replace("\\,", ",");
+                if (!(elements[i].startsWith("'") && elements[i].endsWith("'"))) {
+                    elements[i] = "'" + elements[i] + "'";
+                }
             }
             String valueSet = StringUtils.join(elements, ",");
             return String.format(format(conditionInstance), valueSet, conditionInstance.getVariableName());

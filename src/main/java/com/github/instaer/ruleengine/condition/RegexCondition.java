@@ -4,12 +4,14 @@ import com.github.instaer.ruleengine.constants.ConditionRelationType;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import org.springframework.stereotype.Component;
 
+import static com.github.instaer.ruleengine.constants.ConditionRelationType.*;
+
 @Component
 public class RegexCondition implements Condition {
 
     @Override
     public ConditionRelationType[] relationTypes() {
-        return new ConditionRelationType[]{ConditionRelationType.REGEX};
+        return new ConditionRelationType[]{REGEX};
     }
 
     @Override

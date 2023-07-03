@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.instaer.ruleengine.condition.Condition;
 import com.github.instaer.ruleengine.condition.ConditionInstance;
+import com.github.instaer.ruleengine.condition.RegexCondition;
+import com.github.instaer.ruleengine.condition.SequenceCondition;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
 import com.github.instaer.ruleengine.constants.ConditionRelationType;
 import com.github.instaer.ruleengine.constants.RuleLogicType;
@@ -30,6 +32,12 @@ public class ExpressionBuildService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private SequenceCondition sequenceCondition;
+
+    @Autowired
+    private RegexCondition regexCondition;
 
     @Autowired
     private List<Condition> conditionList;
@@ -187,9 +195,10 @@ public class ExpressionBuildService {
             ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
-            // When the condition relation type is regex, not convert it to a string by adding single quotes.
+            // When the condition relation type is regex or sequence, not convert it to a string by adding single quotes.
             String referenceValue = conditionInfo.getReferenceValue();
-            if (!ConditionRelationType.REGEX.equals(relationType)) {
+            if (Arrays.binarySearch(regexCondition.relationTypes(), relationType) < 0 &&
+                    Arrays.binarySearch(sequenceCondition.relationTypes(), relationType) < 0) {
                 try {
                     referenceValue = stringValueEscape(referenceValue);
                 } catch (Exception e) {
@@ -251,7 +260,6 @@ public class ExpressionBuildService {
      */
     private String stringValueEscape(Object value) throws Exception {
         Assert.notNull(value, "Value cannot be null");
-
         String stringValue;
         if (value instanceof String) {
             stringValue = value.toString();
@@ -262,6 +270,10 @@ public class ExpressionBuildService {
 
         if (Boolean.TRUE.toString().equals(stringValue) || Boolean.FALSE.toString().equals(stringValue) ||
                 NumberUtils.isCreatable(stringValue)) {
+            return stringValue;
+        }
+
+        if (stringValue.startsWith("'") && stringValue.endsWith("'")) {
             return stringValue;
         }
 
