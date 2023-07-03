@@ -94,10 +94,21 @@ CREATE TABLE `t_ruleset_info` (
 
 |       条件类型       |  描述  |
 | :-------------------: | :----: |
-|    INCLUDE_IN_LIST    |  包括  |
-|  NOT_INCLUDE_IN_LIST  | 不包括 |
-| SOME_CONTAINS_IN_LIST |  包含  |
-| NONE_CONTAINS_IN_LIST | 不包含 |
+|    INCLUDE_IN_LIST    |  列表包含指定字符串  |
+|  NOT_INCLUDE_IN_LIST  | 列表不包含指定字符串 |
+| SOME_CONTAINS_IN_LIST |  列表包含指定字符串的某一部分  |
+| NONE_CONTAINS_IN_LIST | 列表不包含指定字符串的任何部分 |
+
+* 字符串类型条件
+
+|       条件类型       |  描述  |
+| :-------------------: | :----: |
+|    STRING_CONTAINS    |  包含指定字符  |
+|  STRING_NOT_CONTAINS  | 不包含指定字符 |
+| STRING_STARTSWITH |  以指定字符开始  |
+| STRING_NOT_STARTSWITH | 不以指定字符开始 |
+| STRING_ENDSWITH |  以指定字符结束  |
+| STRING_NOT_ENDSWITH | 不以指定字符结束 |
 
 * 正则类型条件
 
