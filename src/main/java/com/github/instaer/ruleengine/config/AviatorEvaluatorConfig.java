@@ -5,7 +5,6 @@ import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Options;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class AviatorEvaluatorConfig {
@@ -18,9 +17,10 @@ public class AviatorEvaluatorConfig {
      * @return
      */
     @Bean
-    @Primary
     AviatorEvaluatorInstance evalEvaluatorInstance() {
         AviatorEvaluatorInstance evaluatorInstance = AviatorEvaluator.getInstance().useLRUExpressionCache(500);
+        evaluatorInstance.setCachedExpressionByDefault(true);
+        evaluatorInstance.setOption(Options.OPTIMIZE_LEVEL, AviatorEvaluator.EVAL);
         // floating point numbers are all parsed as decimal
         evaluatorInstance.setOption(Options.ALWAYS_PARSE_FLOATING_POINT_NUMBER_INTO_DECIMAL, true);
         return evaluatorInstance;
@@ -37,6 +37,8 @@ public class AviatorEvaluatorConfig {
     AviatorEvaluatorInstance compileEvaluatorInstance() {
         AviatorEvaluatorInstance evaluatorInstance = AviatorEvaluator.getInstance();
         evaluatorInstance.setOption(Options.OPTIMIZE_LEVEL, AviatorEvaluator.COMPILE);
+        // floating point numbers are all parsed as decimal
+        evaluatorInstance.setOption(Options.ALWAYS_PARSE_FLOATING_POINT_NUMBER_INTO_DECIMAL, true);
         return evaluatorInstance;
     }
 }
