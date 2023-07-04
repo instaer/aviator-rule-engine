@@ -131,9 +131,9 @@ CREATE TABLE `t_ruleset_info` (
 | :-------: | :--: |
 |  REGEX  | 正则 |
 
-> **提示:** 正则表达式作为参考值(`referenceValue`)传入时，语法和Java完全一致。但形式上有略微差异，AviatorScript中的正则表达式需要以`\`括起来，并且对于需要转义的字符不需要连续的反斜杠`\\` ，只要一个`\` 即可。
+> **提示:** 正则表达式作为参考值(`referenceValue`)传入时，语法和Java完全一致。但形式上有略微差异，AviatorScript中的正则表达式需要以`/`括起来，并且对于需要转义的字符不需要连续的反斜杠`\\` ，只要一个`\` 即可。
 >
-> 此处做了兼容，如果参考值配置的正则表达式首尾不包含`\`时，将自动添加。
+> 此处做了兼容，如果参考值配置的正则表达式首尾不包含`/`时，将自动添加。
 
 ## 支持的规则逻辑运算类型
 [RuleLogicType](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/java/com/github/instaer/ruleengine/constants/RuleLogicType.java)
