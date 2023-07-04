@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "aviator.expression-cache-capacity",
+      "type": "java.lang.Integer",
+      "description": "AviatorEvaluator instance LRU expression cache capacity."
+    }
+  ]
+}

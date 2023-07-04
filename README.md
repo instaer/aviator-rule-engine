@@ -423,6 +423,11 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 
 或者通过外部接口调用`/api/executeRuleset`。
 
+## Aviator编译模式
+默认配置的Aviator执行器实例(`AviatorEvaluatorInstance`)设置的是编译缓存模式，避免在每次执行规则集时都对表达式重新编译，影响性能。
+
+同时也使用了LRU缓存(Aviator 5.0+)，用于指定缓存的规则集表达式数量，默认是500，可以在配置文件中对属性(`aviator.expression-cache-capacity`)进行配置。
+
 ## 使用说明
 建议将本项目部署为独立的服务。数据库及相关服务配置请修改[配置文件](https://github.com/instaer/aviator-rule-engine/blob/master/src/main/resources/application.properties) 。
 

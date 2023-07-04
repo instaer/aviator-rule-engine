@@ -3,8 +3,10 @@ package com.github.instaer.ruleengine.config;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Options;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class AviatorEvaluatorConfig {
@@ -16,9 +18,10 @@ public class AviatorEvaluatorConfig {
      *
      * @return
      */
+    @Primary
     @Bean
-    AviatorEvaluatorInstance evalEvaluatorInstance() {
-        AviatorEvaluatorInstance evaluatorInstance = AviatorEvaluator.getInstance().useLRUExpressionCache(500);
+    AviatorEvaluatorInstance evalEvaluatorInstance(@Value("${aviator.expression-cache-capacity:500}") int capacity) {
+        AviatorEvaluatorInstance evaluatorInstance = AviatorEvaluator.getInstance().useLRUExpressionCache(capacity);
         evaluatorInstance.setCachedExpressionByDefault(true);
         evaluatorInstance.setOption(Options.OPTIMIZE_LEVEL, AviatorEvaluator.EVAL);
         // floating point numbers are all parsed as decimal
