@@ -17,7 +17,14 @@ public class RegexCondition implements Condition {
     @Override
     public String build(ConditionInstance conditionInstance) {
         try {
-            return String.format(format(conditionInstance), conditionInstance.getVariableName(), conditionInstance.getReferenceValue());
+            String referenceValue = conditionInstance.getReferenceValue();
+            if (!referenceValue.startsWith("/")) {
+                referenceValue = "/" + referenceValue;
+            }
+            if (!referenceValue.endsWith("/")) {
+                referenceValue = referenceValue + "/";
+            }
+            return String.format(format(conditionInstance), conditionInstance.getVariableName(), referenceValue);
         } catch (Exception e) {
             throw new RuleRunTimeException(e);
         }
