@@ -8,8 +8,8 @@
 - [<u>**快速查看接口文档**</u>](./README_API.md)
 
 ## 依赖版本
-- AviatorScript 5.3.0+
-- SpringBoot 2.0+
+- AviatorScript 5.3.3
+- SpringBoot 2.3.8.RELEASE
 
 ## 创建数据表
 <details>
