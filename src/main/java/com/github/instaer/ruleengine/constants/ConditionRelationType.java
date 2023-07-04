@@ -77,6 +77,17 @@ public enum ConditionRelationType {
     STRING_NOT_ENDSWITH("不以指定字符结束", "!string.endsWith(str(%s),str(%s))"),
 
     /**
+     * number interval
+     * e.g. [1,10], (1,10), [1,10), (1,10]
+     */
+    INTERVAL_NUMBER("数值区间", "(%1$s %2$s %3$s && %1$s %4$s %5$s)"),
+
+    /**
+     * character length interval
+     */
+    INTERVAL_STRING_LENGTH("字符长度区间", "(string.length(str(%1$s)) %2$s %3$s && string.length(str(%1$s)) %4$s %5$s)"),
+
+    /**
      * match regular expression
      */
     REGEX("正则", "str(%s) =~ %s");

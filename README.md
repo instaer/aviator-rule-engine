@@ -99,7 +99,11 @@ CREATE TABLE `t_ruleset_info` (
 | SOME_CONTAINS_IN_LIST |  列表包含指定字符串的某一部分  |
 | NONE_CONTAINS_IN_LIST | 列表不包含指定字符串的任何部分 |
 
-* 字符串类型条件
+> **提示:** 列表作为参考值(`referenceValue`)传入时，多个元素之间以逗号(`,`)进行分隔。
+>
+> 例如：`1,2,3`，`字符1,字符2,字符3`。
+
+* 字符类型条件
 
 |       条件类型       |  描述  |
 | :-------------------: | :----: |
@@ -109,6 +113,17 @@ CREATE TABLE `t_ruleset_info` (
 | STRING_NOT_STARTSWITH | 不以指定字符开始 |
 | STRING_ENDSWITH |  以指定字符结束  |
 | STRING_NOT_ENDSWITH | 不以指定字符结束 |
+
+* 区间类型条件
+
+|       条件类型       |  描述  |
+| :-------------------: | :----: |
+|    INTERVAL_NUMBER    |  数值区间  |
+|  INTERVAL_STRING_LENGTH  | 字符长度区间 |
+
+> **提示:** 区间作为参考值(`referenceValue`)传入时，和数学中的区间表示形式和含义相同。
+>
+> 例如：`[1,10]`是闭区间，表示：`{x|1≤x≤10}`；`(1,10)`是开区间，表示：`{x|1<x<10}`；`[1,10)`是左闭右开区间，表示：`{x|1≤x<10}`；`(1,10]`是左开右闭区间，表示：`{x|1<x≤10}`。
 
 * 正则类型条件
 
@@ -274,21 +289,12 @@ return rmap;
 [
     {
         "ruleId": 2,
-        "name": "children age lower",
+        "name": "children age 0~3",
         "variableName": "AGE",
-        "referenceValue": "0",
-        "relationType": "GREATER_EQUAL",
+        "referenceValue": "[0,3]",
+        "relationType": "INTERVAL_NUMBER",
         "logicType": "AND",
         "priority": 10
-    },
-    {
-        "ruleId": 2,
-        "name": "children age upper",
-        "variableName": "AGE",
-        "referenceValue": "3",
-        "relationType": "LESS_EQUAL",
-        "logicType": "AND",
-        "priority": 9
     },
     {
         "ruleId": 2,
@@ -307,21 +313,12 @@ return rmap;
 [
     {
         "ruleId": 4,
-        "name": "children age lower",
+        "name": "children age 4~11",
         "variableName": "AGE",
-        "referenceValue": "4",
-        "relationType": "GREATER_EQUAL",
+        "referenceValue": "[4,11]",
+        "relationType": "INTERVAL_NUMBER",
         "logicType": "AND",
         "priority": 10
-    },
-    {
-        "ruleId": 4,
-        "name": "children age upper",
-        "variableName": "AGE",
-        "referenceValue": "11",
-        "relationType": "LESS_EQUAL",
-        "logicType": "AND",
-        "priority": 9
     },
     {
         "ruleId": 4,
