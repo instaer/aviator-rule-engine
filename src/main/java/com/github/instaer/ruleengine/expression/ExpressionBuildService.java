@@ -113,7 +113,7 @@ public class ExpressionBuildService {
                 continue;
             }
 
-            RuleLogicType currentRuleLogicType = RuleLogicType.getRuleLogicType(ruleInfo.getLogicType());
+            RuleLogicType currentRuleLogicType = RuleLogicType.getEnum(ruleInfo.getLogicType());
             String ruleExpression = buildRuleExpression(conditionInfos);
 
             // first rule
@@ -190,9 +190,9 @@ public class ExpressionBuildService {
 
         List<ConditionInstance> conditionInstances = new ArrayList<>();
         for (ConditionInfoEntity conditionInfo : conditionInfos) {
-            ConditionRelationType relationType = Optional.ofNullable(ConditionRelationType.getConditionRelationType(conditionInfo.getRelationType()))
+            ConditionRelationType relationType = Optional.ofNullable(ConditionRelationType.getEnum(conditionInfo.getRelationType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(relationType):" + conditionInfo.getRelationType()));
-            ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getConditionLogicType(conditionInfo.getLogicType()))
+            ConditionLogicType logicType = Optional.ofNullable(ConditionLogicType.getEnum(conditionInfo.getLogicType()))
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(logicType):" + conditionInfo.getLogicType()));
 
             // When the condition relation type is regex or sequence or interval, not convert it to a string by adding single quotes.

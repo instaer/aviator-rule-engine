@@ -5,7 +5,7 @@ import com.github.instaer.ruleengine.constants.ConditionRelationType;
 public interface Condition {
 
     default String format(ConditionInstance conditionInstance) {
-        return conditionInstance.getRelationType().getFormat();
+        return conditionInstance.getRelationType().getValue();
     }
 
     ConditionRelationType[] relationTypes();

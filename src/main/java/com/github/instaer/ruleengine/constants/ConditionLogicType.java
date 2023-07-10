@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,13 +30,12 @@ public enum ConditionLogicType {
     private final String desc;
     private final String value;
 
-    public static ConditionLogicType getConditionLogicType(String name) {
-        return Arrays.stream(ConditionLogicType.values())
-                .filter(t -> t.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+    public static ConditionLogicType getEnum(String name) {
+        return Arrays.stream(values()).filter(t -> t.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public static Map<String, String> conditionLogicTypeMap = Arrays.stream(ConditionLogicType.values())
-            .collect(Collectors.toMap(ConditionLogicType::name, ConditionLogicType::getDesc));
+    public static Map<String, String> getOptions() {
+        return Arrays.stream(values())
+                .collect(Collectors.toMap(Enum::name, e -> e.desc, (v1, v2) -> v2, LinkedHashMap::new));
+    }
 }

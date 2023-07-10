@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -93,15 +94,18 @@ public enum ConditionRelationType {
     REGEX("正则", "str(%s) =~ %s");
 
     private final String desc;
-    private final String format;
 
-    public static ConditionRelationType getConditionRelationType(String name) {
-        return Arrays.stream(ConditionRelationType.values())
-                .filter(t -> t.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+    /**
+     * The aviator expression corresponding to the condition relation operator
+     */
+    private final String value;
+
+    public static ConditionRelationType getEnum(String name) {
+        return Arrays.stream(values()).filter(e -> e.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public static Map<String, String> conditionRelationTypeMap = Arrays.stream(ConditionRelationType.values())
-            .collect(Collectors.toMap(ConditionRelationType::name, ConditionRelationType::getDesc));
+    public static Map<String, String> getOptions() {
+        return Arrays.stream(values())
+                .collect(Collectors.toMap(Enum::name, e -> e.desc, (v1, v2) -> v2, LinkedHashMap::new));
+    }
 }

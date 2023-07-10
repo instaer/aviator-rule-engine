@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,13 +37,12 @@ public enum RuleLogicType {
     private final String desc;
     private final String value;
 
-    public static RuleLogicType getRuleLogicType(String name) {
-        return Arrays.stream(RuleLogicType.values())
-                .filter(t -> t.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+    public static RuleLogicType getEnum(String name) {
+        return Arrays.stream(values()).filter(e -> e.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public static Map<String, String> ruleLogicTypeMap = Arrays.stream(RuleLogicType.values())
-            .collect(Collectors.toMap(RuleLogicType::name, RuleLogicType::getDesc));
+    public static Map<String, String> getOptions() {
+        return Arrays.stream(values())
+                .collect(Collectors.toMap(Enum::name, e -> e.desc, (v1, v2) -> v2, LinkedHashMap::new));
+    }
 }
