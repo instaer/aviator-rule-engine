@@ -8,7 +8,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/executeRuleset```
+- URL:  ```/api/rulesetInfo/execute```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -43,7 +43,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/conditionLogicTypeMap```
+- URL:  ```/admin/conditionLogicType/get```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -70,7 +70,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/conditionRelationTypeMap```
+- URL:  ```/admin/conditionRelationType/get```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -106,7 +106,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/ruleLogicTypeMap```
+- URL:  ```/admin/ruleLogicType/get```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -133,7 +133,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/refreshRuleset```
+- URL:  ```/admin/rulesetInfo/refresh```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -160,7 +160,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/findRulesetInfoPage?page=0&size=10&rulesetCode=RULESET_EXAMPLE```
+- URL:  ```/admin/rulesetInfo/query?page=0&size=10&rulesetCode=RULESET_EXAMPLE```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -221,7 +221,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/saveRulesetInfo```
+- URL:  ```/admin/rulesetInfo/save```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -258,7 +258,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/deleteRulesetInfo```
+- URL:  ```/admin/rulesetInfo/delete```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -285,7 +285,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/findRuleInfoPage?page=0&size=10&rulesetId=5```
+- URL:  ```/admin/ruleInfo/query?page=0&size=10&rulesetId=5```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -346,7 +346,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/saveRuleInfo```
+- URL:  ```/admin/ruleInfo/save```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -385,7 +385,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/deleteRuleInfo```
+- URL:  ```/admin/ruleInfo/delete```
 - Headers:  Content-Type: application/json
 - Body:
 ```
@@ -408,11 +408,11 @@
 </details>
 
 <details>
-  <summary><b>查询条件（分页）</b></summary>
+  <summary><b>查询条件列表（分页）</b></summary>
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/findConditionInfoPage?page=0&size=10&ruleId=17```
+- URL:  ```/admin/conditionInfoList/query?page=0&size=10&ruleId=17```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -482,11 +482,11 @@
 </details>
 
 <details>
-  <summary><b>保存条件</b></summary>
+  <summary><b>保存条件列表</b></summary>
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/saveConditionInfoList```
+- URL:  ```/admin/conditionList/save```
 - Headers:  Content-Type: application/json
 - Body:
 ```

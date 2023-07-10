@@ -18,7 +18,7 @@ public class RuleCoreController {
     @Autowired
     private RuleCoreService ruleCoreService;
 
-    @PostMapping("/executeRuleset")
+    @PostMapping("/rulesetInfo/execute")
     public ResponseVO<Map<String, Object>> executeRuleset(@RequestBody RulesetInfoDTO dto) {
         return ResponseVO.ok(ruleCoreService.executeRuleset(dto.getRulesetCode(), dto.getParaMap()));
     }

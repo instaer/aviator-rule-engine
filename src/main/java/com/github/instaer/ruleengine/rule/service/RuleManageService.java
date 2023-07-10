@@ -41,7 +41,7 @@ public class RuleManageService {
      *
      * @param rulesetId
      */
-    public void refreshRuleset(Long rulesetId) {
+    public void refreshRulesetInfo(Long rulesetId) {
         RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
                 .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId):" + rulesetId));
         String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
@@ -53,7 +53,7 @@ public class RuleManageService {
         }
     }
 
-    public Page<RulesetInfoEntity> findRulesetInfoPage(RulesetInfoDTO dto) {
+    public Page<RulesetInfoEntity> queryRulesetInfo(RulesetInfoDTO dto) {
         RulesetInfoEntity rulesetInfoEntity = new RulesetInfoEntity();
         rulesetInfoEntity.setCode(dto.getRulesetCode());
         Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
@@ -89,7 +89,7 @@ public class RuleManageService {
         rulesetInfoRepository.deleteById(rulesetId);
     }
 
-    public Page<RuleInfoEntity> findRuleInfoPage(Long rulesetId, Integer page, Integer size) {
+    public Page<RuleInfoEntity> queryRuleInfo(Long rulesetId, Integer page, Integer size) {
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
@@ -107,7 +107,7 @@ public class RuleManageService {
         ruleInfoEntity = ruleInfoRepository.save(ruleInfoEntity);
 
         // refresh ruleset
-        refreshRuleset(rulesetId);
+        refreshRulesetInfo(rulesetId);
 
         return ruleInfoEntity;
     }
@@ -123,10 +123,10 @@ public class RuleManageService {
 
         // refresh ruleset
         RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(ruleId);
-        refreshRuleset(ruleInfo.getRulesetId());
+        refreshRulesetInfo(ruleInfo.getRulesetId());
     }
 
-    public Page<ConditionInfoEntity> findConditionInfoPage(Long ruleId, Integer page, Integer size) {
+    public Page<ConditionInfoEntity> queryConditionInfo(Long ruleId, Integer page, Integer size) {
         if (null == ruleId || ruleId <= 0) {
             throw new RuleRunTimeException("invalid parameter(ruleId)");
         }
@@ -154,7 +154,7 @@ public class RuleManageService {
 
         // refresh ruleset
         RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(ruleId);
-        refreshRuleset(ruleInfo.getRulesetId());
+        refreshRulesetInfo(ruleInfo.getRulesetId());
 
         return conditionInfoEntityList;
     }
