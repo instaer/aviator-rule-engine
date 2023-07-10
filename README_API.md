@@ -486,7 +486,7 @@
 
 #### Request
 - Method: **POST**
-- URL:  ```/admin/conditionList/save```
+- URL:  ```/admin/conditionInfoList/save```
 - Headers:  Content-Type: application/json
 - Body:
 ```

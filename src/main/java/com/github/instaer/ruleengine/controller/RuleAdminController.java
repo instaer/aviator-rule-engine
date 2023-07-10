@@ -83,7 +83,7 @@ public class RuleAdminController {
         return ResponseVO.ok(ruleManageService.queryConditionInfo(dto.getRuleId(), dto.getPage(), dto.getSize()));
     }
 
-    @PostMapping("/conditionList/save")
+    @PostMapping("/conditionInfoList/save")
     public ResponseVO<List<ConditionInfoEntity>> saveConditionList(@RequestBody List<ConditionInfoEntity> conditionInfoEntityList) {
         return ResponseVO.ok(ruleManageService.saveConditionInfoList(conditionInfoEntityList));
     }
