@@ -43,7 +43,7 @@ public class RuleManageService {
      */
     public void refreshRulesetInfo(Long rulesetId) {
         RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
-                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId):" + rulesetId));
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId)"));
         String rulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
         if (StringUtils.isNotEmpty(rulesetExpression)) {
             rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
@@ -67,6 +67,28 @@ public class RuleManageService {
         RulesetInfoEntity findRulesetInfoEntity = rulesetInfoRepository.findByCode(rulesetInfoEntity.getCode());
         if (null != findRulesetInfoEntity && !findRulesetInfoEntity.getId().equals(rulesetInfoEntity.getId())) {
             throw new RuleRunTimeException("ruleset code already exists");
+        }
+
+        Long rulesetId = rulesetInfoEntity.getId();
+        if (null == rulesetId) {
+            rulesetInfoEntity.setMode(RulesetMode.BUILDING.getCode());
+        }
+        else {
+            RulesetInfoEntity oldRulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
+                    .orElseThrow(() -> new RuntimeException("invalid parameter(id)"));
+            rulesetInfoEntity.setCode(oldRulesetInfoEntity.getCode());
+            rulesetInfoEntity.setExpression(oldRulesetInfoEntity.getExpression());
+            rulesetInfoEntity.setMode(oldRulesetInfoEntity.getMode());
+
+            // rebuild ruleset expression when defaultReturnValues changes
+            String oldDefaultReturnValues = oldRulesetInfoEntity.getDefaultReturnValues();
+            if (null != oldDefaultReturnValues && !oldDefaultReturnValues.equals(rulesetInfoEntity.getDefaultReturnValues())) {
+                String newRulesetExpression = expressionBuildService.buildRulesetExpression(rulesetInfoEntity);
+                if (StringUtils.isNotEmpty(newRulesetExpression)) {
+                    rulesetInfoEntity.setMode(RulesetMode.BUILT.getCode());
+                    rulesetInfoEntity.setExpression(newRulesetExpression);
+                }
+            }
         }
 
         return rulesetInfoRepository.save(rulesetInfoEntity);
@@ -104,11 +126,27 @@ public class RuleManageService {
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
-        ruleInfoEntity = ruleInfoRepository.save(ruleInfoEntity);
 
-        // refresh ruleset
-        refreshRulesetInfo(rulesetId);
+        boolean refreshRulesetFlag = false;
+        Long ruleId = ruleInfoEntity.getId();
+        if (null != ruleId) {
+            RuleInfoEntity oldRuleInfoEntity = ruleInfoRepository.findById(ruleId)
+                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id)"));
+            ruleInfoEntity.setRulesetId(oldRuleInfoEntity.getRulesetId());
 
+            // rebuild ruleset expression when returnValue or logicType changes
+            String oldReturnValues = oldRuleInfoEntity.getReturnValues();
+            String oldLogicType = oldRuleInfoEntity.getLogicType();
+            Integer oldPriority = oldRuleInfoEntity.getPriority();
+            refreshRulesetFlag = (null != oldReturnValues && !oldReturnValues.equals(ruleInfoEntity.getReturnValues())) ||
+                    (null != oldLogicType && !oldLogicType.equals(ruleInfoEntity.getLogicType())) ||
+                    (null != oldPriority && !oldPriority.equals(ruleInfoEntity.getPriority()));
+        }
+
+        ruleInfoRepository.save(ruleInfoEntity);
+        if (refreshRulesetFlag) {
+            refreshRulesetInfo(rulesetId);
+        }
         return ruleInfoEntity;
     }
 
@@ -121,9 +159,9 @@ public class RuleManageService {
         conditionInfoRepository.deleteByRuleId(ruleId);
         ruleInfoRepository.deleteById(ruleId);
 
-        // refresh ruleset
-        RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(ruleId);
-        refreshRulesetInfo(ruleInfo.getRulesetId());
+        RuleInfoEntity ruleInfoEntity = ruleInfoRepository.findById(ruleId)
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(ruleId)"));
+        refreshRulesetInfo(ruleInfoEntity.getRulesetId());
     }
 
     public Page<ConditionInfoEntity> queryConditionInfo(Long ruleId, Integer page, Integer size) {
@@ -152,10 +190,9 @@ public class RuleManageService {
         conditionInfoRepository.deleteByRuleId(ruleId);
         conditionInfoEntityList = conditionInfoRepository.saveAll(conditionInfoEntityList);
 
-        // refresh ruleset
-        RuleInfoEntity ruleInfo = ruleInfoRepository.getOne(ruleId);
-        refreshRulesetInfo(ruleInfo.getRulesetId());
-
+        RuleInfoEntity ruleInfoEntity = ruleInfoRepository.findById(ruleId)
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(ruleId)"));
+        refreshRulesetInfo(ruleInfoEntity.getRulesetId());
         return conditionInfoEntityList;
     }
 }
