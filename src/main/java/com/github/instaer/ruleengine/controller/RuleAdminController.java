@@ -42,7 +42,7 @@ public class RuleAdminController {
 
     @PostMapping("/rulesetInfo/refresh")
     public ResponseVO<String> refreshRulesetInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.refreshRulesetInfo(((Integer) requestBody.get("rulesetId")).longValue());
+        ruleManageService.refreshRulesetInfo(requestBody);
         return ResponseVO.ok();
     }
 
@@ -58,7 +58,7 @@ public class RuleAdminController {
 
     @PostMapping("/rulesetInfo/delete")
     public ResponseVO<String> deleteRulesetInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.deleteRulesetInfo(((Integer) requestBody.get("rulesetId")).longValue());
+        ruleManageService.deleteRulesetInfo(requestBody);
         return ResponseVO.ok();
     }
 
@@ -74,7 +74,7 @@ public class RuleAdminController {
 
     @PostMapping("/ruleInfo/delete")
     public ResponseVO<String> deleteRuleInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.deleteRuleInfo(((Integer) requestBody.get("ruleId")).longValue());
+        ruleManageService.deleteRuleInfo(requestBody);
         return ResponseVO.ok();
     }
 

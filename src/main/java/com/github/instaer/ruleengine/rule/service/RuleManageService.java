@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -36,11 +37,20 @@ public class RuleManageService {
     @Autowired
     private ExpressionBuildService expressionBuildService;
 
-    /**
-     * refresh the expression and mode of a ruleset
-     *
-     * @param rulesetId
-     */
+    public void refreshRulesetInfo(Map<String, Object> requestBody) {
+        Long rulesetId;
+        try {
+            rulesetId = (Long) requestBody.get("rulesetId");
+        } catch (Exception e) {
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
+        }
+        if (null == rulesetId || rulesetId <= 0) {
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
+        }
+
+        refreshRulesetInfo(rulesetId);
+    }
+
     public void refreshRulesetInfo(Long rulesetId) {
         RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
                 .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetId)"));
@@ -68,9 +78,15 @@ public class RuleManageService {
         if (null != findRulesetInfoEntity && !findRulesetInfoEntity.getId().equals(rulesetInfoEntity.getId())) {
             throw new RuleRunTimeException("ruleset code already exists");
         }
+        if (StringUtils.isBlank(rulesetInfoEntity.getName())) {
+            throw new RuleRunTimeException("invalid parameter(name)");
+        }
 
         Long rulesetId = rulesetInfoEntity.getId();
         if (null == rulesetId) {
+            if (StringUtils.isBlank(rulesetInfoEntity.getCode())) {
+                throw new RuleRunTimeException("invalid parameter(code)");
+            }
             rulesetInfoEntity.setMode(RulesetMode.BUILDING.getCode());
         }
         else {
@@ -95,7 +111,13 @@ public class RuleManageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteRulesetInfo(Long rulesetId) {
+    public void deleteRulesetInfo(Map<String, Object> requestBody) {
+        Long rulesetId;
+        try {
+            rulesetId = (Long) requestBody.get("rulesetId");
+        } catch (Exception e) {
+            throw new RuleRunTimeException("invalid parameter(rulesetId)");
+        }
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
@@ -126,10 +148,21 @@ public class RuleManageService {
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
+        if (StringUtils.isAnyBlank(ruleInfoEntity.getName(), ruleInfoEntity.getReturnValues(), ruleInfoEntity.getLogicType())) {
+            throw new RuleRunTimeException("invalid parameter(name, returnValues, logicType)");
+        }
+        if (null == ruleInfoEntity.getPriority()) {
+            throw new RuleRunTimeException("invalid parameter(priority)");
+        }
 
         boolean refreshRulesetFlag = false;
         Long ruleId = ruleInfoEntity.getId();
-        if (null != ruleId) {
+        if (null == ruleId) {
+            if (null == ruleInfoEntity.getRulesetId()) {
+                throw new RuleRunTimeException("invalid parameter(rulesetId)");
+            }
+        }
+        else {
             RuleInfoEntity oldRuleInfoEntity = ruleInfoRepository.findById(ruleId)
                     .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id)"));
             ruleInfoEntity.setRulesetId(oldRuleInfoEntity.getRulesetId());
@@ -151,7 +184,13 @@ public class RuleManageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteRuleInfo(Long ruleId) {
+    public void deleteRuleInfo(Map<String, Object> requestBody) {
+        Long ruleId;
+        try {
+            ruleId = (Long) requestBody.get("ruleId");
+        } catch (Exception e) {
+            throw new RuleRunTimeException("invalid parameter(ruleId)");
+        }
         if (null == ruleId || ruleId <= 0) {
             throw new RuleRunTimeException("invalid parameter(ruleId)");
         }
