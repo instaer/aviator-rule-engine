@@ -1,4 +1,4 @@
-package com.github.instaer.ruleengine.common;
+package com.github.instaer.ruleengine.common.vo;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,9 @@
 package com.github.instaer.ruleengine.controller;
 
-import com.github.instaer.ruleengine.common.ConditionInfoDTO;
-import com.github.instaer.ruleengine.common.ResponseVO;
-import com.github.instaer.ruleengine.common.RuleInfoDTO;
-import com.github.instaer.ruleengine.common.RulesetInfoDTO;
+import com.github.instaer.ruleengine.common.dto.ConditionInfoDTO;
+import com.github.instaer.ruleengine.common.vo.ResponseVO;
+import com.github.instaer.ruleengine.common.dto.RuleInfoDTO;
+import com.github.instaer.ruleengine.common.dto.RulesetInfoDTO;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
 import com.github.instaer.ruleengine.constants.ConditionRelationType;
 import com.github.instaer.ruleengine.constants.RuleLogicType;
@@ -41,8 +41,8 @@ public class RuleAdminController {
     }
 
     @PostMapping("/rulesetInfo/refresh")
-    public ResponseVO<String> refreshRulesetInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.refreshRulesetInfo(requestBody);
+    public ResponseVO<String> refreshRulesetInfo(@RequestBody RulesetInfoDTO dto) {
+        ruleManageService.refreshRulesetInfo(dto);
         return ResponseVO.ok();
     }
 
@@ -52,39 +52,39 @@ public class RuleAdminController {
     }
 
     @PostMapping("/rulesetInfo/save")
-    public ResponseVO<RulesetInfoEntity> saveRulesetInfo(@RequestBody RulesetInfoEntity rulesetInfoEntity) {
-        return ResponseVO.ok(ruleManageService.saveRulesetInfo(rulesetInfoEntity));
+    public ResponseVO<RulesetInfoEntity> saveRulesetInfo(@RequestBody RulesetInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.saveRulesetInfo(dto));
     }
 
     @PostMapping("/rulesetInfo/delete")
-    public ResponseVO<String> deleteRulesetInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.deleteRulesetInfo(requestBody);
+    public ResponseVO<String> deleteRulesetInfo(@RequestBody RulesetInfoDTO dto) {
+        ruleManageService.deleteRulesetInfo(dto);
         return ResponseVO.ok();
     }
 
     @GetMapping("/ruleInfo/query")
     public ResponseVO<Page<RuleInfoEntity>> queryRuleInfo(RuleInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.queryRuleInfo(dto.getRulesetId(), dto.getPage(), dto.getSize()));
+        return ResponseVO.ok(ruleManageService.queryRuleInfo(dto));
     }
 
     @PostMapping("/ruleInfo/save")
-    public ResponseVO<RuleInfoEntity> saveRuleInfo(@RequestBody RuleInfoEntity ruleInfoEntity) {
-        return ResponseVO.ok(ruleManageService.saveRuleInfo(ruleInfoEntity));
+    public ResponseVO<RuleInfoEntity> saveRuleInfo(@RequestBody RuleInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.saveRuleInfo(dto));
     }
 
     @PostMapping("/ruleInfo/delete")
-    public ResponseVO<String> deleteRuleInfo(@RequestBody Map<String, Object> requestBody) {
-        ruleManageService.deleteRuleInfo(requestBody);
+    public ResponseVO<String> deleteRuleInfo(@RequestBody RuleInfoDTO dto) {
+        ruleManageService.deleteRuleInfo(dto);
         return ResponseVO.ok();
     }
 
     @GetMapping("/conditionInfoList/query")
     public ResponseVO<Page<ConditionInfoEntity>> queryConditionInfoList(ConditionInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.queryConditionInfo(dto.getRuleId(), dto.getPage(), dto.getSize()));
+        return ResponseVO.ok(ruleManageService.queryConditionInfo(dto));
     }
 
     @PostMapping("/conditionInfoList/save")
-    public ResponseVO<List<ConditionInfoEntity>> saveConditionList(@RequestBody List<ConditionInfoEntity> conditionInfoEntityList) {
-        return ResponseVO.ok(ruleManageService.saveConditionInfoList(conditionInfoEntityList));
+    public ResponseVO<List<ConditionInfoEntity>> saveConditionList(@RequestBody List<ConditionInfoDTO> dtoList) {
+        return ResponseVO.ok(ruleManageService.saveConditionInfoList(dtoList));
     }
 }

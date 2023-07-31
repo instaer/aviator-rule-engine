@@ -1,7 +1,7 @@
 package com.github.instaer.ruleengine.controller;
 
-import com.github.instaer.ruleengine.common.ResponseVO;
-import com.github.instaer.ruleengine.common.RulesetInfoDTO;
+import com.github.instaer.ruleengine.common.vo.ResponseVO;
+import com.github.instaer.ruleengine.common.dto.RulesetInfoDTO;
 import com.github.instaer.ruleengine.rule.service.RuleCoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +20,6 @@ public class RuleCoreController {
 
     @PostMapping("/rulesetInfo/execute")
     public ResponseVO<Map<String, Object>> executeRuleset(@RequestBody RulesetInfoDTO dto) {
-        return ResponseVO.ok(ruleCoreService.executeRuleset(dto.getRulesetCode(), dto.getParaMap()));
+        return ResponseVO.ok(ruleCoreService.executeRuleset(dto.getCode(), dto.getParaMap()));
     }
 }

@@ -13,7 +13,7 @@
 - Body:
 ```
 {
-  "rulesetCode":"RULESET_EXAMPLE",
+  "code":"RULESET_EXAMPLE",
   "paraMap":{
     "AGE":19,
     "MOBILE":"18966666666"
@@ -138,7 +138,7 @@
 - Body:
 ```
 {
-  "rulesetId":5
+  "id":5
 }
 ```
 
@@ -263,7 +263,7 @@
 - Body:
 ```
 {
-  "rulesetId":5
+  "id":5
 }
 ```
 
