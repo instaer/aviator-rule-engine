@@ -2,7 +2,7 @@ package com.github.instaer.ruleengine.controller;
 
 import com.github.instaer.ruleengine.common.vo.ResponseVO;
 import com.github.instaer.ruleengine.common.dto.RulesetInfoDTO;
-import com.github.instaer.ruleengine.rule.service.RuleCoreService;
+import com.github.instaer.ruleengine.rule.RuleCoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.github.instaer.ruleengine.common.dto;
+package com.github.instaer.ruleengine.common.vo;
 
 import com.github.instaer.ruleengine.common.entity.ConditionInfoEntity;
 import lombok.Getter;
@@ -6,5 +6,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ConditionInfoDTO extends ConditionInfoEntity {
+public class ConditionInfoVO extends ConditionInfoEntity {
 }

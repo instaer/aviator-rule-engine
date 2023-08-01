@@ -1,10 +1,10 @@
-package com.github.instaer.ruleengine.rule.service;
+package com.github.instaer.ruleengine.rule;
 
 import com.github.instaer.ruleengine.aviator.ExpressionExecuteService;
 import com.github.instaer.ruleengine.constants.RulesetMode;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
-import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
-import com.github.instaer.ruleengine.rule.repository.RulesetInfoRepository;
+import com.github.instaer.ruleengine.common.entity.RulesetInfoEntity;
+import com.github.instaer.ruleengine.repository.RulesetInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

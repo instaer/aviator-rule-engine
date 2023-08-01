@@ -1,4 +1,4 @@
-package com.github.instaer.ruleengine.rule.entity;
+package com.github.instaer.ruleengine.common.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

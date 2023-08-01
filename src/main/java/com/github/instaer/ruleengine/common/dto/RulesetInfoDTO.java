@@ -1,6 +1,6 @@
 package com.github.instaer.ruleengine.common.dto;
 
-import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
+import com.github.instaer.ruleengine.common.entity.RulesetInfoEntity;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
-package com.github.instaer.ruleengine.rule.repository;
+package com.github.instaer.ruleengine.repository;
 
-import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
+import com.github.instaer.ruleengine.common.entity.RuleInfoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,18 +1,21 @@
-package com.github.instaer.ruleengine.rule.service;
+package com.github.instaer.ruleengine.rule;
 
 import com.github.instaer.ruleengine.common.dto.ConditionInfoDTO;
 import com.github.instaer.ruleengine.common.dto.RuleInfoDTO;
 import com.github.instaer.ruleengine.common.dto.RulesetInfoDTO;
+import com.github.instaer.ruleengine.common.entity.ConditionInfoEntity;
+import com.github.instaer.ruleengine.common.entity.RuleInfoEntity;
+import com.github.instaer.ruleengine.common.entity.RulesetInfoEntity;
 import com.github.instaer.ruleengine.common.mapper.EntityMapper;
+import com.github.instaer.ruleengine.common.vo.ConditionInfoVO;
+import com.github.instaer.ruleengine.common.vo.RuleInfoVO;
+import com.github.instaer.ruleengine.common.vo.RulesetInfoVO;
 import com.github.instaer.ruleengine.constants.RulesetMode;
 import com.github.instaer.ruleengine.exception.RuleRunTimeException;
 import com.github.instaer.ruleengine.expression.ExpressionBuildService;
-import com.github.instaer.ruleengine.rule.entity.ConditionInfoEntity;
-import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
-import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
-import com.github.instaer.ruleengine.rule.repository.ConditionInfoRepository;
-import com.github.instaer.ruleengine.rule.repository.RuleInfoRepository;
-import com.github.instaer.ruleengine.rule.repository.RulesetInfoRepository;
+import com.github.instaer.ruleengine.repository.ConditionInfoRepository;
+import com.github.instaer.ruleengine.repository.RuleInfoRepository;
+import com.github.instaer.ruleengine.repository.RulesetInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,17 +62,17 @@ public class RuleManageService {
         }
     }
 
-    public Page<RulesetInfoEntity> queryRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
+    public Page<RulesetInfoVO> queryRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
         RulesetInfoEntity rulesetInfoEntity = new RulesetInfoEntity();
         rulesetInfoEntity.setCode(rulesetInfoDTO.getCode());
         Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
 
         // pageNumber start from 0
         Pageable pageable = PageRequest.of(rulesetInfoDTO.getPage(), rulesetInfoDTO.getSize(), Sort.Direction.DESC, "id");
-        return rulesetInfoRepository.findAll(example, pageable);
+        return rulesetInfoRepository.findAll(example, pageable).map(EntityMapper.INSTANCE::toVO);
     }
 
-    public RulesetInfoEntity saveRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
+    public RulesetInfoVO saveRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
         RulesetInfoEntity rulesetInfoEntity = EntityMapper.INSTANCE.toEntity(rulesetInfoDTO);
         RulesetInfoEntity findRulesetInfoEntity = rulesetInfoRepository.findByCode(rulesetInfoEntity.getCode());
         if (null != findRulesetInfoEntity && !findRulesetInfoEntity.getId().equals(rulesetInfoEntity.getId())) {
@@ -104,7 +107,7 @@ public class RuleManageService {
             }
         }
 
-        return rulesetInfoRepository.save(rulesetInfoEntity);
+        return EntityMapper.INSTANCE.toVO(rulesetInfoRepository.save(rulesetInfoEntity));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -125,18 +128,18 @@ public class RuleManageService {
         rulesetInfoRepository.deleteById(rulesetId);
     }
 
-    public Page<RuleInfoEntity> queryRuleInfo(RuleInfoDTO ruleInfoDTO) {
+    public Page<RuleInfoVO> queryRuleInfo(RuleInfoDTO ruleInfoDTO) {
         Long rulesetId = ruleInfoDTO.getRulesetId();
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
         }
 
         Pageable pageable = PageRequest.of(ruleInfoDTO.getPage(), ruleInfoDTO.getSize(), Sort.Direction.DESC, "priority", "id");
-        return ruleInfoRepository.findByRulesetId(rulesetId, pageable);
+        return ruleInfoRepository.findByRulesetId(rulesetId, pageable).map(EntityMapper.INSTANCE::toVO);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public RuleInfoEntity saveRuleInfo(RuleInfoDTO ruleInfoDTO) {
+    public RuleInfoVO saveRuleInfo(RuleInfoDTO ruleInfoDTO) {
         RuleInfoEntity ruleInfoEntity = EntityMapper.INSTANCE.toEntity(ruleInfoDTO);
         Long rulesetId = ruleInfoEntity.getRulesetId();
         if (null == rulesetId || rulesetId <= 0) {
@@ -174,7 +177,7 @@ public class RuleManageService {
         if (refreshRulesetFlag) {
             refreshRulesetInfo(rulesetId);
         }
-        return ruleInfoEntity;
+        return EntityMapper.INSTANCE.toVO(ruleInfoEntity);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -192,18 +195,17 @@ public class RuleManageService {
         refreshRulesetInfo(ruleInfoEntity.getRulesetId());
     }
 
-    public Page<ConditionInfoEntity> queryConditionInfo(ConditionInfoDTO conditionInfoDTO) {
+    public List<ConditionInfoVO> queryConditionInfo(ConditionInfoDTO conditionInfoDTO) {
         Long ruleId = conditionInfoDTO.getRuleId();
         if (null == ruleId || ruleId <= 0) {
             throw new RuleRunTimeException("invalid parameter(ruleId)");
         }
 
-        Pageable pageable = PageRequest.of(conditionInfoDTO.getPage(), conditionInfoDTO.getSize(), Sort.Direction.DESC, "priority", "id");
-        return conditionInfoRepository.findByRuleId(ruleId, pageable);
+        return EntityMapper.INSTANCE.toVOList(conditionInfoRepository.findByRuleId(ruleId));
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<ConditionInfoEntity> saveConditionInfoList(List<ConditionInfoDTO> conditionInfoDTOList) {
+    public List<ConditionInfoVO> saveConditionInfoList(List<ConditionInfoDTO> conditionInfoDTOList) {
         List<ConditionInfoEntity> conditionInfoEntityList = EntityMapper.INSTANCE.toEntityList(conditionInfoDTOList);
         if (CollectionUtils.isEmpty(conditionInfoEntityList)) {
             throw new RuleRunTimeException("condition info list is empty");
@@ -223,6 +225,6 @@ public class RuleManageService {
         RuleInfoEntity ruleInfoEntity = ruleInfoRepository.findById(ruleId)
                 .orElseThrow(() -> new RuleRunTimeException("invalid parameter(ruleId)"));
         refreshRulesetInfo(ruleInfoEntity.getRulesetId());
-        return conditionInfoEntityList;
+        return EntityMapper.INSTANCE.toVOList(conditionInfoEntityList);
     }
 }

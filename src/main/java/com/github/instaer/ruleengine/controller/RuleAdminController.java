@@ -1,16 +1,16 @@
 package com.github.instaer.ruleengine.controller;
 
 import com.github.instaer.ruleengine.common.dto.ConditionInfoDTO;
-import com.github.instaer.ruleengine.common.vo.ResponseVO;
 import com.github.instaer.ruleengine.common.dto.RuleInfoDTO;
 import com.github.instaer.ruleengine.common.dto.RulesetInfoDTO;
+import com.github.instaer.ruleengine.common.vo.ConditionInfoVO;
+import com.github.instaer.ruleengine.common.vo.ResponseVO;
+import com.github.instaer.ruleengine.common.vo.RuleInfoVO;
+import com.github.instaer.ruleengine.common.vo.RulesetInfoVO;
 import com.github.instaer.ruleengine.constants.ConditionLogicType;
 import com.github.instaer.ruleengine.constants.ConditionRelationType;
 import com.github.instaer.ruleengine.constants.RuleLogicType;
-import com.github.instaer.ruleengine.rule.entity.ConditionInfoEntity;
-import com.github.instaer.ruleengine.rule.entity.RuleInfoEntity;
-import com.github.instaer.ruleengine.rule.entity.RulesetInfoEntity;
-import com.github.instaer.ruleengine.rule.service.RuleManageService;
+import com.github.instaer.ruleengine.rule.RuleManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +47,12 @@ public class RuleAdminController {
     }
 
     @GetMapping("/rulesetInfo/query")
-    public ResponseVO<Page<RulesetInfoEntity>> queryRulesetInfo(RulesetInfoDTO dto) {
+    public ResponseVO<Page<RulesetInfoVO>> queryRulesetInfo(RulesetInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.queryRulesetInfo(dto));
     }
 
     @PostMapping("/rulesetInfo/save")
-    public ResponseVO<RulesetInfoEntity> saveRulesetInfo(@RequestBody RulesetInfoDTO dto) {
+    public ResponseVO<RulesetInfoVO> saveRulesetInfo(@RequestBody RulesetInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.saveRulesetInfo(dto));
     }
 
@@ -63,12 +63,12 @@ public class RuleAdminController {
     }
 
     @GetMapping("/ruleInfo/query")
-    public ResponseVO<Page<RuleInfoEntity>> queryRuleInfo(RuleInfoDTO dto) {
+    public ResponseVO<Page<RuleInfoVO>> queryRuleInfo(RuleInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.queryRuleInfo(dto));
     }
 
     @PostMapping("/ruleInfo/save")
-    public ResponseVO<RuleInfoEntity> saveRuleInfo(@RequestBody RuleInfoDTO dto) {
+    public ResponseVO<RuleInfoVO> saveRuleInfo(@RequestBody RuleInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.saveRuleInfo(dto));
     }
 
@@ -79,12 +79,12 @@ public class RuleAdminController {
     }
 
     @GetMapping("/conditionInfoList/query")
-    public ResponseVO<Page<ConditionInfoEntity>> queryConditionInfoList(ConditionInfoDTO dto) {
+    public ResponseVO<List<ConditionInfoVO>> queryConditionInfoList(ConditionInfoDTO dto) {
         return ResponseVO.ok(ruleManageService.queryConditionInfo(dto));
     }
 
     @PostMapping("/conditionInfoList/save")
-    public ResponseVO<List<ConditionInfoEntity>> saveConditionList(@RequestBody List<ConditionInfoDTO> dtoList) {
+    public ResponseVO<List<ConditionInfoVO>> saveConditionList(@RequestBody List<ConditionInfoDTO> dtoList) {
         return ResponseVO.ok(ruleManageService.saveConditionInfoList(dtoList));
     }
 }
