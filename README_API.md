@@ -408,11 +408,11 @@
 </details>
 
 <details>
-  <summary><b>查询条件列表（分页）</b></summary>
+  <summary><b>查询条件列表（不分页）（指定规则）</b></summary>
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/conditionInfoList/query?page=0&size=10&ruleId=17```
+- URL:  ```/admin/conditionInfoList/query?ruleId=17```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -426,63 +426,36 @@
     "status": 200,
     "success": true,
     "message": null,
-    "body": {
-        "content": [
-            {
-                "id": 51,
-                "ruleId": 17,
-                "name": "条件-年龄",
-                "remark": null,
-                "variableName": "AGE",
-                "referenceValue": "18",
-                "relationType": "GREATER",
-                "logicType": "AND",
-                "priority": 100
-            },
-            {
-                "id": 52,
-                "ruleId": 17,
-                "name": "条件-手机号码",
-                "remark": null,
-                "variableName": "MOBILE",
-                "referenceValue": "/^(138|139|189|199)\\d{8}$/",
-                "relationType": "REGEX",
-                "logicType": "AND",
-                "priority": 99
-            }
-        ],
-        "pageable": {
-            "sort": {
-                "sorted": true,
-                "unsorted": false,
-                "empty": false
-            },
-            "offset": 0,
-            "pageSize": 10,
-            "pageNumber": 0,
-            "paged": true,
-            "unpaged": false
+    "body": [
+        {
+            "id": 55,
+            "ruleId": 17,
+            "name": "条件-姓名",
+            "remark": null,
+            "variableName": "NAME",
+            "referenceValue": "[2,4)",
+            "relationType": "INTERVAL_STRING_LENGTH",
+            "logicType": "AND",
+            "priority": 100
         },
-        "totalElements": 2,
-        "last": true,
-        "totalPages": 1,
-        "size": 10,
-        "number": 0,
-        "sort": {
-            "sorted": true,
-            "unsorted": false,
-            "empty": false
-        },
-        "numberOfElements": 2,
-        "first": true,
-        "empty": false
-    }
+        {
+            "id": 56,
+            "ruleId": 17,
+            "name": "条件-手机号码",
+            "remark": null,
+            "variableName": "MOBILE",
+            "referenceValue": "/^(138|139|189|199)\\d{8}$/",
+            "relationType": "REGEX",
+            "logicType": "AND",
+            "priority": 99
+        }
+    ]
 }
 ```
 </details>
 
 <details>
-  <summary><b>保存条件列表</b></summary>
+  <summary><b>保存条件列表（全量更新）（指定规则）</b></summary>
 
 #### Request
 - Method: **POST**
