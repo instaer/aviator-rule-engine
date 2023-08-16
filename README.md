@@ -2,6 +2,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=bugs)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 
