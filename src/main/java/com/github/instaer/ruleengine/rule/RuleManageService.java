@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -149,12 +149,15 @@ public class RuleManageService {
         if (StringUtils.isBlank(rulesetCode)) {
             rulesetId = ruleInfoDTO.getRulesetId();
             if (null == rulesetId || rulesetId <= 0) {
-                throw new RuleRunTimeException("invalid parameter(rulesetId)");
+                return new PageImpl<>(Collections.emptyList());
             }
         }
         else {
-            rulesetId = Optional.ofNullable(rulesetInfoRepository.findByCode(rulesetCode)).map(RulesetInfoEntity::getId)
-                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetCode)"));
+            RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findByCode(rulesetCode);
+            if (null == rulesetInfoEntity) {
+                return new PageImpl<>(Collections.emptyList());
+            }
+            rulesetId = rulesetInfoEntity.getId();
         }
 
         Pageable pageable = PageRequest.of(ruleInfoDTO.getPage(), ruleInfoDTO.getSize(), Sort.Direction.DESC, "priority", "id");
