@@ -12,10 +12,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(annotations = RestController.class)
 public class RestExceptionHandler {
 
+    @ExceptionHandler(RuleRunTimeException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseVO<?> exceptionHandler(RuleRunTimeException e) {
+        log.error("Rule RunTimeException", e);
+        return ResponseVO.error(e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseVO<?> exceptionHandler(Exception e) {
-        log.error("Request Exception", e);
+        log.error("Server RunTimeException", e);
         return ResponseVO.error(e.getMessage());
     }
 }
