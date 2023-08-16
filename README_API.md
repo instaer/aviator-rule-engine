@@ -281,7 +281,7 @@
 </details>
 
 <details>
-  <summary><b>查询规则（分页）</b></summary>
+  <summary><b>查询规则（分页）（指定规则集）</b></summary>
 
 #### Request
 - Method: **GET**
