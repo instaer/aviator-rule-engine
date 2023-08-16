@@ -227,6 +227,9 @@
 ```
 ```
 
+#### 参数说明
+> 参数可指定ID（id）或编码（code）
+
 #### Response
 - Headers:  Content-Type: application/json
 - Body
@@ -322,6 +325,9 @@
 - Body:
 ```
 ```
+
+#### 参数说明
+> 规则集可指定ID（rulesetId）或编码（rulesetCode）
 
 #### Response
 - Headers:  Content-Type: application/json

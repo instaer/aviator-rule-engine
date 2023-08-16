@@ -9,4 +9,5 @@ import lombok.Setter;
 public class RuleInfoDTO extends RuleInfoEntity {
     private Integer page;
     private Integer size;
+    private String rulesetCode;
 }

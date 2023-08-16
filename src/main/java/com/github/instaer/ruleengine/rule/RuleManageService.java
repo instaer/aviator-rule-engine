@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -143,9 +144,17 @@ public class RuleManageService {
     }
 
     public Page<RuleInfoVO> queryRuleInfoPage(RuleInfoDTO ruleInfoDTO) {
-        Long rulesetId = ruleInfoDTO.getRulesetId();
-        if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid parameter(rulesetId)");
+        Long rulesetId;
+        String rulesetCode = ruleInfoDTO.getRulesetCode();
+        if (StringUtils.isBlank(rulesetCode)) {
+            rulesetId = ruleInfoDTO.getRulesetId();
+            if (null == rulesetId || rulesetId <= 0) {
+                throw new RuleRunTimeException("invalid parameter(rulesetId)");
+            }
+        }
+        else {
+            rulesetId = Optional.ofNullable(rulesetInfoRepository.findByCode(rulesetCode)).map(RulesetInfoEntity::getId)
+                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(rulesetCode)"));
         }
 
         Pageable pageable = PageRequest.of(ruleInfoDTO.getPage(), ruleInfoDTO.getSize(), Sort.Direction.DESC, "priority", "id");
