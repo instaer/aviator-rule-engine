@@ -62,7 +62,7 @@ public class RuleManageService {
         }
     }
 
-    public Page<RulesetInfoVO> queryRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
+    public Page<RulesetInfoVO> queryRulesetInfoPage(RulesetInfoDTO rulesetInfoDTO) {
         RulesetInfoEntity rulesetInfoEntity = new RulesetInfoEntity();
         rulesetInfoEntity.setCode(rulesetInfoDTO.getCode());
         Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
@@ -70,6 +70,20 @@ public class RuleManageService {
         // pageNumber start from 0
         Pageable pageable = PageRequest.of(rulesetInfoDTO.getPage(), rulesetInfoDTO.getSize(), Sort.Direction.DESC, "id");
         return rulesetInfoRepository.findAll(example, pageable).map(EntityMapper.INSTANCE::toVO);
+    }
+
+    public RulesetInfoVO queryRulesetInfoDetail(RulesetInfoDTO rulesetInfoDTO) {
+        if (null == rulesetInfoDTO.getId() && StringUtils.isBlank(rulesetInfoDTO.getCode())) {
+            throw new RuleRunTimeException("invalid parameter(id or code)");
+        }
+
+        RulesetInfoEntity rulesetInfoEntity = new RulesetInfoEntity();
+        rulesetInfoEntity.setId(rulesetInfoDTO.getId());
+        rulesetInfoEntity.setCode(rulesetInfoDTO.getCode());
+        Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
+
+        return rulesetInfoRepository.findOne(example).map(EntityMapper.INSTANCE::toVO)
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id or code)"));
     }
 
     public RulesetInfoVO saveRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
@@ -91,7 +105,7 @@ public class RuleManageService {
         }
         else {
             RulesetInfoEntity oldRulesetInfoEntity = rulesetInfoRepository.findById(rulesetId)
-                    .orElseThrow(() -> new RuntimeException("invalid parameter(id)"));
+                    .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id)"));
             rulesetInfoEntity.setCode(oldRulesetInfoEntity.getCode());
             rulesetInfoEntity.setExpression(oldRulesetInfoEntity.getExpression());
             rulesetInfoEntity.setMode(oldRulesetInfoEntity.getMode());
@@ -128,7 +142,7 @@ public class RuleManageService {
         rulesetInfoRepository.deleteById(rulesetId);
     }
 
-    public Page<RuleInfoVO> queryRuleInfo(RuleInfoDTO ruleInfoDTO) {
+    public Page<RuleInfoVO> queryRuleInfoPage(RuleInfoDTO ruleInfoDTO) {
         Long rulesetId = ruleInfoDTO.getRulesetId();
         if (null == rulesetId || rulesetId <= 0) {
             throw new RuleRunTimeException("invalid parameter(rulesetId)");
@@ -195,7 +209,7 @@ public class RuleManageService {
         refreshRulesetInfo(ruleInfoEntity.getRulesetId());
     }
 
-    public List<ConditionInfoVO> queryConditionInfo(ConditionInfoDTO conditionInfoDTO) {
+    public List<ConditionInfoVO> queryConditionInfoList(ConditionInfoDTO conditionInfoDTO) {
         Long ruleId = conditionInfoDTO.getRuleId();
         if (null == ruleId || ruleId <= 0) {
             throw new RuleRunTimeException("invalid parameter(ruleId)");

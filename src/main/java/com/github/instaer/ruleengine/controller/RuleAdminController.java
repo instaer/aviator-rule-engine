@@ -47,8 +47,13 @@ public class RuleAdminController {
     }
 
     @GetMapping("/rulesetInfo/query")
-    public ResponseVO<Page<RulesetInfoVO>> queryRulesetInfo(RulesetInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.queryRulesetInfo(dto));
+    public ResponseVO<Page<RulesetInfoVO>> queryRulesetInfoPage(RulesetInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.queryRulesetInfoPage(dto));
+    }
+
+    @GetMapping("/rulesetInfo/detail")
+    public ResponseVO<RulesetInfoVO> queryRulesetInfoDetail(RulesetInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.queryRulesetInfoDetail(dto));
     }
 
     @PostMapping("/rulesetInfo/save")
@@ -63,8 +68,8 @@ public class RuleAdminController {
     }
 
     @GetMapping("/ruleInfo/query")
-    public ResponseVO<Page<RuleInfoVO>> queryRuleInfo(RuleInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.queryRuleInfo(dto));
+    public ResponseVO<Page<RuleInfoVO>> queryRuleInfoPage(RuleInfoDTO dto) {
+        return ResponseVO.ok(ruleManageService.queryRuleInfoPage(dto));
     }
 
     @PostMapping("/ruleInfo/save")
@@ -80,11 +85,11 @@ public class RuleAdminController {
 
     @GetMapping("/conditionInfoList/query")
     public ResponseVO<List<ConditionInfoVO>> queryConditionInfoList(ConditionInfoDTO dto) {
-        return ResponseVO.ok(ruleManageService.queryConditionInfo(dto));
+        return ResponseVO.ok(ruleManageService.queryConditionInfoList(dto));
     }
 
     @PostMapping("/conditionInfoList/save")
-    public ResponseVO<List<ConditionInfoVO>> saveConditionList(@RequestBody List<ConditionInfoDTO> dtoList) {
+    public ResponseVO<List<ConditionInfoVO>> saveConditionInfoList(@RequestBody List<ConditionInfoDTO> dtoList) {
         return ResponseVO.ok(ruleManageService.saveConditionInfoList(dtoList));
     }
 }

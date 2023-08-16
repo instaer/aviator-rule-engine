@@ -160,7 +160,7 @@
 
 #### Request
 - Method: **GET**
-- URL:  ```/admin/rulesetInfo/query?page=0&size=10&rulesetCode=RULESET_EXAMPLE```
+- URL:  ```/admin/rulesetInfo/query?page=0&size=10&code=RULESET_EXAMPLE```
 - Headers:  Content-Type: application/x-www-form-urlencoded
 - Body:
 ```
@@ -211,6 +211,38 @@
         "numberOfElements": 1,
         "first": true,
         "empty": false
+    }
+}
+```
+</details>
+
+<details>
+  <summary><b>查询规则集详情</b></summary>
+
+#### Request
+- Method: **GET**
+- URL:  ```/admin/rulesetInfo/detail?code=RULESET_EXAMPLE```
+- Headers:  Content-Type: application/x-www-form-urlencoded
+- Body:
+```
+```
+
+#### Response
+- Headers:  Content-Type: application/json
+- Body
+```
+{
+    "status": 200,
+    "success": true,
+    "message": null,
+    "body": {
+        "id": 5,
+        "code": "RULESET_EXAMPLE",
+        "name": "ruleset example",
+        "remark": null,
+        "defaultReturnValues": "{myvalue:['校验不通过','校验次数为0']}",
+        "expression": "let rmap = seq.map('myvalue', '[\"校验不通过\",\"校验次数为0\"]');\nif((string.length(str(NAME)) >= 2 && string.length(str(NAME)) < 4) && str(MOBILE) =~ /^(138|139|189|199)\\d{8}$/){\nseq.put(rmap, 'myvalue', '[\"校验通过\",\"校验次数为1\"]');\n}\nreturn rmap;",
+        "mode": 0
     }
 }
 ```
