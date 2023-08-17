@@ -155,7 +155,7 @@ public class RuleManageService {
         else {
             RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findByCode(rulesetCode);
             if (null == rulesetInfoEntity) {
-                return new PageImpl<>(Collections.emptyList());
+                throw new RuleRunTimeException("invalid parameter(rulesetCode)");
             }
             rulesetId = rulesetInfoEntity.getId();
         }
