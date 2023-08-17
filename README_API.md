@@ -380,7 +380,7 @@
 </details>
 
 <details>
-  <summary><b>保存规则</b></summary>
+  <summary><b>保存规则（指定规则集）</b></summary>
 
 #### Request
 - Method: **POST**
@@ -396,6 +396,9 @@
   "priority":"99"
 }
 ```
+
+#### 参数说明
+> 规则集可指定ID（rulesetId）或编码（rulesetCode）
 
 #### Response
 - Headers:  Content-Type: application/json

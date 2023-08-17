@@ -166,11 +166,24 @@ public class RuleManageService {
 
     @Transactional(rollbackFor = Exception.class)
     public RuleInfoVO saveRuleInfo(RuleInfoDTO ruleInfoDTO) {
-        RuleInfoEntity ruleInfoEntity = EntityMapper.INSTANCE.toEntity(ruleInfoDTO);
-        Long rulesetId = ruleInfoEntity.getRulesetId();
-        if (null == rulesetId || rulesetId <= 0) {
-            throw new RuleRunTimeException("invalid parameter(rulesetId)");
+        Long rulesetId;
+        String rulesetCode = ruleInfoDTO.getRulesetCode();
+        if (StringUtils.isBlank(rulesetCode)) {
+            rulesetId = ruleInfoDTO.getRulesetId();
+            if (null == rulesetId || rulesetId <= 0) {
+                throw new RuleRunTimeException("invalid parameter(rulesetId)");
+            }
         }
+        else {
+            RulesetInfoEntity rulesetInfoEntity = rulesetInfoRepository.findByCode(rulesetCode);
+            if (null == rulesetInfoEntity) {
+                throw new RuleRunTimeException("invalid parameter(rulesetCode)");
+            }
+            rulesetId = rulesetInfoEntity.getId();
+            ruleInfoDTO.setRulesetId(rulesetId);
+        }
+
+        RuleInfoEntity ruleInfoEntity = EntityMapper.INSTANCE.toEntity(ruleInfoDTO);
         if (StringUtils.isAnyBlank(ruleInfoEntity.getName(), ruleInfoEntity.getReturnValues(), ruleInfoEntity.getLogicType())) {
             throw new RuleRunTimeException("invalid parameter(name, returnValues, logicType)");
         }
