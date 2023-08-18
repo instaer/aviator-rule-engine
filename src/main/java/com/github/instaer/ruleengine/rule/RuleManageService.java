@@ -212,6 +212,13 @@ public class RuleManageService {
                     (null != oldPriority && !oldPriority.equals(ruleInfoEntity.getPriority()));
         }
 
+        RuleInfoEntity ruleInfoParam = new RuleInfoEntity();
+        ruleInfoParam.setRulesetId(rulesetId);
+        ruleInfoParam.setPriority(ruleInfoEntity.getPriority());
+        if (ruleInfoRepository.findAll(Example.of(ruleInfoParam)).stream().anyMatch(r -> !r.getId().equals(ruleId))) {
+            throw new RuleRunTimeException("A rule with the same priority under the same ruleset already exists");
+        }
+
         ruleInfoRepository.save(ruleInfoEntity);
         if (refreshRulesetFlag) {
             refreshRulesetInfo(rulesetId);
@@ -223,14 +230,14 @@ public class RuleManageService {
     public void deleteRuleInfo(RuleInfoDTO ruleInfoDTO) {
         Long ruleId = ruleInfoDTO.getId();
         if (null == ruleId || ruleId <= 0) {
-            throw new RuleRunTimeException("invalid parameter(ruleId)");
+            throw new RuleRunTimeException("invalid parameter(id)");
         }
+
+        RuleInfoEntity ruleInfoEntity = ruleInfoRepository.findById(ruleId)
+                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id)"));
 
         conditionInfoRepository.deleteByRuleId(ruleId);
         ruleInfoRepository.deleteById(ruleId);
-
-        RuleInfoEntity ruleInfoEntity = ruleInfoRepository.findById(ruleId)
-                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(ruleId)"));
         refreshRulesetInfo(ruleInfoEntity.getRulesetId());
     }
 
@@ -253,7 +260,7 @@ public class RuleManageService {
         boolean hasSamePriority = conditionInfoEntityList.stream().map(ConditionInfoEntity::getPriority).distinct()
                 .count() < conditionInfoEntityList.size();
         if (hasSamePriority) {
-            throw new RuleRunTimeException("conditions under a rule cannot be set with the same priority");
+            throw new RuleRunTimeException("conditions with the same priority cannot exist under a rule");
         }
 
         // remove existing conditionInfo and save the new
