@@ -84,7 +84,7 @@ public class RuleManageService {
         Example<RulesetInfoEntity> example = Example.of(rulesetInfoEntity);
 
         return rulesetInfoRepository.findOne(example).map(EntityMapper.INSTANCE::toVO)
-                .orElseThrow(() -> new RuleRunTimeException("invalid parameter(id or code)"));
+                .orElseGet(RulesetInfoVO::new);
     }
 
     public RulesetInfoVO saveRulesetInfo(RulesetInfoDTO rulesetInfoDTO) {
