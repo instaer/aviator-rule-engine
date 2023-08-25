@@ -252,11 +252,12 @@ public class RuleManageService {
 
     @Transactional(rollbackFor = Exception.class)
     public List<ConditionInfoVO> saveConditionInfoList(List<ConditionInfoDTO> conditionInfoDTOList) {
-        List<ConditionInfoEntity> conditionInfoEntityList = EntityMapper.INSTANCE.toEntityList(conditionInfoDTOList);
-        if (CollectionUtils.isEmpty(conditionInfoEntityList)) {
+        if (CollectionUtils.isEmpty(conditionInfoDTOList)) {
             throw new RuleRunTimeException("condition info list is empty");
         }
 
+        conditionInfoDTOList.forEach(e -> e.setId(null));
+        List<ConditionInfoEntity> conditionInfoEntityList = EntityMapper.INSTANCE.toEntityList(conditionInfoDTOList);
         boolean hasSamePriority = conditionInfoEntityList.stream().map(ConditionInfoEntity::getPriority).distinct()
                 .count() < conditionInfoEntityList.size();
         if (hasSamePriority) {
