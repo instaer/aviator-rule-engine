@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RequestMapping("admin")
 @RestController
-public class RuleAdminController {
+public class AdminController {
 
     @Autowired
     private RuleManageService ruleManageService;

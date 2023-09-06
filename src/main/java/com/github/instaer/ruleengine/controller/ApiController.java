@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RequestMapping("api")
 @RestController
-public class RuleCoreController {
+public class ApiController {
 
     @Autowired
     private RuleCoreService ruleCoreService;
