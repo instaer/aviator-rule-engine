@@ -7,9 +7,9 @@
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=instaer_aviator-rule-engine&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=instaer_aviator-rule-engine)
 
 # aviator-rule-engine
-一个基于[**AviatorScript**](https://github.com/killme2008/aviatorscript)的简单规则引擎实例。
+一个基于[**AviatorScript**](https://github.com/killme2008/aviatorscript)的简单规则引擎实例。将规则划分为规则集、规则、条件三个维度，可以满足业务规则的通用性配置，同时也可以进行扩展。
 
-将规则划分为规则集、规则、条件三个维度，可以满足业务规则的通用性配置，同时也可以进行扩展。
+此项目同时包含完整的后台管理页面（使用Next.js + Material UI开发），也可自行替换。
 
 - [<u>**快速使用示例入口**</u>](#使用示例)  
 - [<u>**快速使用说明入口**</u>](#使用说明)  
@@ -453,4 +453,6 @@ System.out.println("费率：" + resultMap.get("RATE"));// 0.1982
 
 在服务部署前，请在配置的数据库中[创建数据表](#创建数据表) 。
 
-目前规则维护仅提供[内部管理接口](./README_API.md#内部管理接口)，建议按照：**规则集**->**规则**->**条件**的顺序进行配置。
+目前规则维护可直接通过界面进行配置，同时也提供了[内部管理接口](./README_API.md#内部管理接口)。
+
+默认的管理后台访问地址为：```http://localhost:8000/static```
