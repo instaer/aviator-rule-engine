@@ -1,4 +1,4 @@
-package com.github.instaer.ruleengine.config;
+package com.github.instaer.ruleengine.aviator;
 
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 @Configuration
-public class AviatorEvaluatorConfig {
+public class EvaluatorInstanceConfig {
 
     /**
      * AviatorScript engine instance, the default global shared.

@@ -1,4 +1,4 @@
-package com.github.instaer.ruleengine.config;
+package com.github.instaer.ruleengine.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
