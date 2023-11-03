@@ -21,6 +21,7 @@ public class ObjectMapperConfig {
     @Primary
     public ObjectMapper objectMapper() {
         return JsonMapper.builder()
+                .findAndAddModules()
                 .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, true)
                 .build()
                 .setSerializationInclusion(JsonInclude.Include.ALWAYS)
